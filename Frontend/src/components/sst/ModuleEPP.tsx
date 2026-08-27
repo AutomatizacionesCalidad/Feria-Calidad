@@ -15,6 +15,7 @@ import {
   Footprints,
   Sparkles
 } from 'lucide-react';
+import { useFairSession } from "@/context/FairSessionContext";
 
 interface ModuleEPPProps {
   onComplete: () => void;
@@ -27,6 +28,9 @@ export default function ModuleEPP({
   onBackToRoute,
   alreadyCompleted = false
 }: ModuleEPPProps) {
+  const { registerActivityAttempt } =
+    useFairSession();
+
   // Screen sequence: 1: Contexto -> 2: Contenido (Video) -> 3: Evaluación (Verdadero o Falso)
   const [currentScreen, setCurrentScreen] = useState<1 | 2 | 3>(1);
 
@@ -44,6 +48,14 @@ export default function ModuleEPP({
     setHasEvaluated(true);
     const correct = ans === 'FALSO';
     setIsAnswerCorrect(correct);
+    registerActivityAttempt({
+      moduloCodigo: "epp",
+      codigoActividad: "epp-verdadero-falso",
+      respuestaJson: {
+        respuesta: ans,
+      },
+      esCorrecta: correct,
+    });
     if (correct) {
       onComplete();
     }
@@ -250,8 +262,28 @@ export default function ModuleEPP({
                 </span>
               </div>
 
+              <video
+                controls
+                preload="metadata"
+                className="w-full aspect-video rounded-2xl bg-black border border-white/10"
+                onPlay={() => {
+                  setIsPlaying(true);
+                  setHasWatchedVideo(true);
+                }}
+                onEnded={() => {
+                  setIsPlaying(false);
+                  setHasWatchedVideo(true);
+                }}
+              >
+                <source
+                  src="/videos/sst/excusas-tipicas-epp.mp4"
+                  type="video/mp4"
+                />
+                Tu navegador no puede reproducir este video.
+              </video>
+
               {/* Video Screen Simulation */}
-              <div className="relative aspect-video bg-gradient-to-tr from-slate-950 via-slate-900 to-slate-800 rounded-2xl flex flex-col items-center justify-center p-6 text-center border border-white/10 overflow-hidden">
+              <div className="hidden relative aspect-video bg-gradient-to-tr from-slate-950 via-slate-900 to-slate-800 rounded-2xl flex-col items-center justify-center p-6 text-center border border-white/10 overflow-hidden">
                 {!isPlaying ? (
                   <div className="space-y-4">
                     <button

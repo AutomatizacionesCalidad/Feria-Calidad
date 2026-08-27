@@ -17,6 +17,7 @@ import {
   ExternalLink,
   Sparkles
 } from 'lucide-react';
+import { useFairSession } from "@/context/FairSessionContext";
 
 interface Estacion04LineaEticaProps {
   onNext: () => void;
@@ -24,6 +25,8 @@ interface Estacion04LineaEticaProps {
 }
 
 export default function Estacion04LineaEtica({ onNext, onPrev }: Estacion04LineaEticaProps) {
+  const { registerActivityAttempt } = useFairSession();
+
   const [selectedAction, setSelectedAction] = useState<'ignorar' | 'reportar' | null>(null);
   const [copiedChannel, setCopiedChannel] = useState<string | null>(null);
 
@@ -31,6 +34,19 @@ export default function Estacion04LineaEtica({ onNext, onPrev }: Estacion04Linea
     navigator.clipboard?.writeText(text);
     setCopiedChannel(channelKey);
     setTimeout(() => setCopiedChannel(null), 2500);
+  };
+
+  const handleAction = (action: 'ignorar' | 'reportar') => {
+    setSelectedAction(action);
+
+    registerActivityAttempt({
+      moduloCodigo: "cumplimiento-linea-etica",
+      codigoActividad: "linea-etica-decision-reporte",
+      respuestaJson: {
+        accion: action,
+      },
+      esCorrecta: action === 'reportar',
+    });
   };
 
   return (
@@ -92,7 +108,7 @@ export default function Estacion04LineaEtica({ onNext, onPrev }: Estacion04Linea
               
               {/* Option: Ignorar */}
               <button
-                onClick={() => setSelectedAction('ignorar')}
+                onClick={() => handleAction('ignorar')}
                 className={`p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${
                   selectedAction === 'ignorar'
                     ? 'bg-rose-50 border-rose-400 text-rose-950 shadow-sm'
@@ -115,7 +131,7 @@ export default function Estacion04LineaEtica({ onNext, onPrev }: Estacion04Linea
 
               {/* Option: Reportar (Correct) */}
               <button
-                onClick={() => setSelectedAction('reportar')}
+                onClick={() => handleAction('reportar')}
                 className={`p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${
                   selectedAction === 'reportar'
                     ? 'bg-emerald-50 border-emerald-500 text-emerald-950 shadow-md ring-2 ring-emerald-500/20'
@@ -123,7 +139,13 @@ export default function Estacion04LineaEtica({ onNext, onPrev }: Estacion04Linea
                 }`}
               >
                 <span className="text-3xl">📢</span>
-                <span className="font-title text-sm font-extrabold uppercase text-emerald-800">
+                <span
+                  className={`font-title text-sm font-extrabold uppercase ${
+                    selectedAction === "reportar"
+                      ? "text-emerald-800"
+                      : "text-slate-700"
+                  }`}
+                  >
                   Reportar
                 </span>
                 <span className="text-[10px] text-slate-500 font-medium">

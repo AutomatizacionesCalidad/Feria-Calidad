@@ -315,3 +315,7 @@ thumb
 sketch
 
 # End of https://www.toptal.com/developers/gitignore/api/react,nextjs,python,django
+
+# Videos locales de la feria. Se alojan en el servidor, no en Git.
+/Frontend/public/videos/
+/Frontend/public/videos/**

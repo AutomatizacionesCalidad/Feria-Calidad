@@ -15,6 +15,7 @@ import {
   Sparkles,
   ChevronDown
 } from 'lucide-react';
+import { useFairSession } from "@/context/FairSessionContext";
 
 interface Estacion02SagrilaftProps {
   onNext: () => void;
@@ -22,6 +23,8 @@ interface Estacion02SagrilaftProps {
 }
 
 export default function Estacion02Sagrilaft({ onNext, onPrev }: Estacion02SagrilaftProps) {
+  const { registerActivityAttempt } = useFairSession();
+
   // Card flip / toggle states for "Descubre los riesgos"
   const [openedCards, setOpenedCards] = useState<Record<string, boolean>>({
     lavado: false,
@@ -45,6 +48,16 @@ export default function Estacion02Sagrilaft({ onNext, onPrev }: Estacion02Sagril
 
   const handleDecision = (choice: 'A' | 'B') => {
     setSelectedDecision(choice);
+
+    registerActivityAttempt({
+      moduloCodigo: "cumplimiento-conceptos",
+      codigoActividad: "sagrilaft-decision-carga",
+      respuestaJson: {
+        decision: choice,
+      },
+      esCorrecta: choice === 'B',
+    });
+
     if (choice === 'B') {
       setMicrocaseStep('decided');
     }
@@ -353,7 +366,13 @@ export default function Estacion02Sagrilaft({ onNext, onPrev }: Estacion02Sagril
                         : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800'
                     }`}
                   >
-                    <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                    <span
+                      className={`w-6 h-6 rounded-full font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 ${
+                        selectedDecision === "B"
+                          ? "bg-emerald-100 text-emerald-800"
+                          : "bg-slate-200 text-slate-700"
+                      }`}
+                    >
                       B
                     </span>
                     <div className="flex-1">

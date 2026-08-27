@@ -291,8 +291,58 @@ export default function TrainingIntroView({
 
             </h3>
 
+            {topic.videoSrc && (
+              <div className="bg-slate-950 rounded-xl overflow-hidden shadow-inner border border-slate-950 mb-5">
+                <video
+                  controls
+                  preload="metadata"
+                  className="w-full aspect-video bg-black"
+                  onPlay={() =>
+                    setVideoPlayed(
+                      true
+                    )
+                  }
+                  onEnded={() =>
+                    setVideoPlayed(
+                      true
+                    )
+                  }
+                >
+                  <source
+                    src={
+                      topic.videoSrc
+                    }
+                    type="video/mp4"
+                  />
+                  Tu navegador no puede reproducir este video.
+                </video>
+
+                <div className="px-4 py-3 bg-slate-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <span className="text-xs font-bold">
+                    Video de instruccion:{" "}
+                    {
+                      topic.name
+                    }
+                  </span>
+
+                  <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${
+                    videoPlayed
+                      ? "bg-emerald-500/20 text-emerald-200"
+                      : "bg-white/10 text-slate-300"
+                  }`}>
+                    {
+                      videoPlayed
+                        ? "Video visualizado"
+                        : "Disponible para reproducir"
+                    }
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* VIDEO - HIGIENE */}
-            {topic.introType ===
+            {!topic.videoSrc &&
+            topic.introType ===
             "video" ? (
 
               <div className="bg-slate-900 rounded-xl overflow-hidden aspect-video relative flex flex-col justify-between p-4 shadow-inner border border-slate-950">

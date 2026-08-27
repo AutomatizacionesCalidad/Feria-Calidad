@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   HelpCircle
 } from 'lucide-react';
+import { useFairSession } from "@/context/FairSessionContext";
 
 interface Estacion06EvaluacionProps {
   onPassed: () => void;
@@ -18,6 +19,8 @@ interface Estacion06EvaluacionProps {
 }
 
 export default function Estacion06Evaluacion({ onPassed, onPrev }: Estacion06EvaluacionProps) {
+  const { registerActivityAttempt } = useFairSession();
+
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
@@ -55,6 +58,15 @@ export default function Estacion06Evaluacion({ onPassed, onPrev }: Estacion06Eva
     const correct = selectedOption === 'B';
     setIsCorrect(correct);
     setSubmitted(true);
+
+    registerActivityAttempt({
+      moduloCodigo: "cumplimiento-evaluacion",
+      codigoActividad: "cumplimiento-evaluacion-final",
+      respuestaJson: {
+        opcion: selectedOption,
+      },
+      esCorrecta: correct,
+    });
   };
 
   const handleRetry = () => {

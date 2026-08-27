@@ -13,6 +13,7 @@ import {
   TrendingUp,
   Cpu
 } from 'lucide-react';
+import { useFairSession } from "@/context/FairSessionContext";
 
 interface FillFormulaChallengeProps {
   onPassed: () => void;
@@ -34,6 +35,8 @@ const AVAILABLE_OPTIONS: ApproachOption[] = [
 ];
 
 export default function FillFormulaChallenge({ onPassed, onPrev }: FillFormulaChallengeProps) {
+  const { registerActivityAttempt } = useFairSession();
+
   // Slots state: slot1, slot2, slot3 storing option ID
   const [slots, setSlots] = useState<{ slot1: string | null; slot2: string | null; slot3: string | null }>({
     slot1: null,
@@ -95,6 +98,17 @@ export default function FillFormulaChallenge({ onPassed, onPrev }: FillFormulaCh
     const correct = slots.slot1 === '6sigma' && slots.slot2 === 'sembrando' && slots.slot3 === 'tpm';
     setValidated(true);
     setIsCorrect(correct);
+
+    registerActivityAttempt({
+      moduloCodigo: "mejoramiento-formula",
+      codigoActividad: "mejoramiento-formula-transformacion",
+      respuestaJson: {
+        slot1: slots.slot1,
+        slot2: slots.slot2,
+        slot3: slots.slot3,
+      },
+      esCorrecta: correct,
+    });
   };
 
   const handleReset = () => {

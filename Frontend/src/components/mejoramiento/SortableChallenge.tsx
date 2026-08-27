@@ -15,6 +15,7 @@ import {
   Sparkle,
   ShieldCheck
 } from 'lucide-react';
+import { useFairSession } from "@/context/FairSessionContext";
 
 export interface SortableStep {
   id: string;
@@ -54,6 +55,8 @@ const INITIAL_STEPS: SortableStep[] = [
 ];
 
 export default function SortableChallenge({ onSuccess, onPrev }: SortableChallengeProps) {
+  const { registerActivityAttempt } = useFairSession();
+
   const [items, setItems] = useState<SortableStep[]>(INITIAL_STEPS);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -115,6 +118,15 @@ export default function SortableChallenge({ onSuccess, onPrev }: SortableChallen
     setIsCorrect(
       correct
     );
+
+    registerActivityAttempt({
+      moduloCodigo: "mejoramiento-tpm",
+      codigoActividad: "tpm-orden-proceso",
+      respuestaJson: {
+        orden: items.map((item) => item.id),
+      },
+      esCorrecta: correct,
+    });
   };
 
   const handleReset = () => {

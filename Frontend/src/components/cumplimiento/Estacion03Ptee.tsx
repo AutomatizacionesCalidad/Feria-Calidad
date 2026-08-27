@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   Sparkles
 } from 'lucide-react';
+import { useFairSession } from "@/context/FairSessionContext";
 
 interface Estacion03PteeProps {
   onNext: () => void;
@@ -20,10 +21,21 @@ interface Estacion03PteeProps {
 }
 
 export default function Estacion03Ptee({ onNext, onPrev }: Estacion03PteeProps) {
+  const { registerActivityAttempt } = useFairSession();
+
   const [selectedDecision, setSelectedDecision] = useState<'A' | 'B' | null>(null);
 
   const handleDecision = (choice: 'A' | 'B') => {
     setSelectedDecision(choice);
+
+    registerActivityAttempt({
+      moduloCodigo: "cumplimiento-linea-etica",
+      codigoActividad: "ptee-decision-soborno",
+      respuestaJson: {
+        decision: choice,
+      },
+      esCorrecta: choice === 'B',
+    });
   };
 
   return (
@@ -183,7 +195,13 @@ export default function Estacion03Ptee({ onNext, onPrev }: Estacion03PteeProps) 
                     : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800'
                 }`}
               >
-                <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                <span
+                  className={`w-6 h-6 rounded-full font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 ${
+                    selectedDecision === "B"
+                      ? "bg-emerald-100 text-emerald-800"
+                      : "bg-slate-200 text-slate-700"
+                  }`}
+                >
                   B
                 </span>
                 <div className="flex-1">

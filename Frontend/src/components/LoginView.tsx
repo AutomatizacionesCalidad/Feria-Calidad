@@ -42,8 +42,11 @@ export default function LoginView() {
   const [errorMsg, setErrorMsg] =
     useState("");
 
+  const [isSubmitting, setIsSubmitting] =
+    useState(false);
+
   // INGRESO A LA FERIA
-  const handleSubmit = (
+  const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
@@ -91,6 +94,7 @@ export default function LoginView() {
     }
 
     setErrorMsg("");
+    setIsSubmitting(true);
 
     // CREAR PROGRESO DINÁMICAMENTE
     const progresoInicial:
@@ -108,9 +112,16 @@ export default function LoginView() {
       }
     );
 
-    // CREAR SESIÓN
+    // SESIÓN LOCAL BASE
     const newSession: UserSession = {
-      cedula: cedulaLimpia,
+      sessionId:
+        null,
+
+      usuarioId:
+        null,
+
+      cedula:
+        cedulaLimpia,
 
       area,
 
@@ -132,18 +143,34 @@ export default function LoginView() {
       fechaFinalizacion:
         null,
 
+      estado:
+        "EN_PROGRESO",
+
       score: 0,
     };
 
-    // Guardar sesión en Context
-    startSession(
-      newSession
-    );
+    try {
+      await startSession(
+        newSession
+      );
 
-    // Navegar a feria
-    router.push(
-      "/feria"
-    );
+      router.push(
+        "/feria"
+      );
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "No se pudo conectar con el backend de la Feria.";
+
+      setErrorMsg(
+        message
+      );
+    } finally {
+      setIsSubmitting(
+        false
+      );
+    }
   };
 
   // UI
@@ -283,6 +310,9 @@ export default function LoginView() {
                   }
                   className="w-full px-4 py-3.5 rounded-xl border border-slate-350 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-prebel-blue focus:border-transparent outline-none transition-all placeholder-stone-400 bg-white/90 hover:bg-white shadow-sm"
                   required
+                  disabled={
+                    isSubmitting
+                  }
                 />
               </div>
             </div>
@@ -317,6 +347,9 @@ export default function LoginView() {
                   }
                   className="w-full px-4 py-3.5 rounded-xl border border-slate-350 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-prebel-blue focus:border-transparent outline-none transition-all bg-white/90 hover:bg-white shadow-sm"
                   required
+                  disabled={
+                    isSubmitting
+                  }
                 />
               </div>
             </div>
@@ -325,13 +358,20 @@ export default function LoginView() {
             <button
               id="btn-ingresar-feria"
               type="submit"
-              className="w-full relative overflow-hidden bg-gradient-to-r from-prebel-blue to-[#2B5A7B] hover:from-[#345369] hover:to-[#1E435E] text-white font-black py-4.5 px-6 rounded-2xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-prebel-blue focus:ring-offset-2 transition-all duration-300 text-xs sm:text-sm uppercase tracking-widest mt-6 group"
+              disabled={
+                isSubmitting
+              }
+              className="w-full relative overflow-hidden bg-gradient-to-r from-prebel-blue to-[#2B5A7B] hover:from-[#345369] hover:to-[#1E435E] disabled:opacity-70 disabled:cursor-not-allowed text-white font-black py-4.5 px-6 rounded-2xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-prebel-blue focus:ring-offset-2 transition-all duration-300 text-xs sm:text-sm uppercase tracking-widest mt-6 group"
             >
 
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none" />
 
               <span className="relative z-10 flex items-center justify-center gap-2">
-                ¡Ingresar a la Feria!
+                {
+                  isSubmitting
+                    ? "Conectando con la Feria..."
+                    : "¡Ingresar a la Feria!"
+                }
                 <Sparkles
                   size={
                     16

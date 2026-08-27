@@ -1,23 +1,9 @@
 "use client";
-import { useRouter } from "next/navigation";
-import {
-  Award,
-  BarChart3,
-  ClipboardCheck,
-  CornerDownRight,
-  Factory,
-  Scale,
-  ShieldCheck,
-  TrendingUp,
-} from "lucide-react";
 import { fairData } from "@/data/fairData";
+import { useRouter } from "next/navigation";
 import { useFairSession } from "@/context/FairSessionContext";
-import {
-  getCalidadProgress,
-  getCumplimientoProgress,
-  getMejoramientoProgress,
-  getSstProgress,
-} from "@/utils/progress";
+import { getCalidadProgress, getCumplimientoProgress, getMejoramientoProgress, getSstProgress } from "@/utils/progress";
+import { Award, BarChart3, ClipboardCheck, CornerDownRight, Factory, Scale, ShieldCheck, TrendingUp, CheckCircle2 } from "lucide-react";
 
 type StandStatus = {
   label: string;
@@ -30,11 +16,22 @@ export default function FairMapView() {
 
   const {
     session,
+    progressPercentage,
+    finalizeSession,
   } = useFairSession();
 
   if (!session) {
     return null;
   }
+
+  const isTrainingStarted =
+    progressPercentage > 0;
+
+  const isTrainingCompleted =
+    progressPercentage >= 100;
+
+  const isFinalized =
+    Boolean(session.fechaFinalizacion);
 
   const buildStatus = (
     percent: number
@@ -365,8 +362,9 @@ export default function FairMapView() {
 
         </div>
 
-        <div className="flex gap-4 shrink-0 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full md:w-auto">
 
+          {/* REPORTE FINAL */}
           <button
             type="button"
             onClick={() =>
@@ -376,27 +374,61 @@ export default function FairMapView() {
             }
             className="flex-1 md:flex-none py-3 px-6 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-xs font-bold transition-all border border-stone-300 flex items-center justify-center gap-2 cursor-pointer"
           >
-
-            <BarChart3
-              size={15}
-            />
+            <BarChart3 size={15} />
 
             Ver Reporte Final
-
           </button>
 
-          <button
-            type="button"
-            onClick={() =>
-              router.push(
-                "/feria/calidad"
-              )
-            }
-            className="flex-1 md:flex-none py-3 px-6 bg-[#60A491] hover:bg-[#4E8777] text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
-          >
-            Comenzar Entrenamiento
-          </button>
+          {/* 0% - COMENZAR ENTRENAMIENTO */}
+          {!isTrainingStarted && (
+            <button
+              type="button"
+              onClick={() =>
+                router.push(
+                  "/feria/calidad"
+                )
+              }
+              className="flex-1 md:flex-none py-3 px-6 bg-[#60A491] hover:bg-[#4E8777] text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <CornerDownRight size={15} />
 
+              Comenzar Entrenamiento
+            </button>
+          )}
+
+          {/* 100% - TERMINAR FERIA */}
+          {isTrainingCompleted &&
+            !isFinalized && (
+              <button
+                type="button"
+                onClick={() => {
+                  finalizeSession();
+
+                  router.push(
+                    "/resultados"
+                  );
+                }}
+                className="flex-1 md:flex-none py-3 px-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold transition-all shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <CheckCircle2
+                  size={15}
+                />
+
+                Terminar Feria
+              </button>
+            )}
+
+          {/* FERIA YA FINALIZADA */}
+          {isTrainingCompleted &&
+            isFinalized && (
+              <div className="flex-1 md:flex-none py-3 px-6 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-extrabold border border-emerald-200 flex items-center justify-center gap-2">
+                <CheckCircle2
+                  size={15}
+                />
+
+                Participación finalizada
+              </div>
+            )}
         </div>
       </div>
     </div>

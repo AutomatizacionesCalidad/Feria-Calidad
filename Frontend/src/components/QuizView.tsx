@@ -16,6 +16,7 @@ import {
   Topic,
 } from "@/types/feria";
 import { useFairSession } from "@/context/FairSessionContext";
+import { registerBackendAnswer } from "@/services/sessionService";
 
 interface QuizViewProps {
   topic: Topic;
@@ -28,7 +29,10 @@ export default function QuizView({
 }: QuizViewProps) {
   const router = useRouter();
 
-  const { completeQuiz } =
+  const {
+    completeQuiz,
+    session,
+  } =
     useFairSession();
 
   const [currentQuestionIdx, setCurrentQuestionIdx] =
@@ -44,6 +48,12 @@ export default function QuizView({
 
   const [quizResult, setQuizResult] =
     useState<QuizResult | null>(null);
+
+  const [isSubmittingQuiz, setIsSubmittingQuiz] =
+    useState(false);
+
+  const [submitError, setSubmitError] =
+    useState("");
 
   const questions =
     topic.quiz;
@@ -98,7 +108,83 @@ export default function QuizView({
   };
 
   // CALCULAR RESULTADO
-  const calculateResults = () => {
+  const getOptionCode = (
+    question: QuizQuestion,
+    answer: string | boolean
+  ) => {
+    if (
+      typeof answer ===
+      "boolean"
+    ) {
+      return answer
+        ? "TRUE"
+        : "FALSE";
+    }
+
+    const optionIndex =
+      question.options?.findIndex(
+        (option) =>
+          option === answer
+      ) ?? -1;
+
+    if (optionIndex < 0) {
+      return undefined;
+    }
+
+    return String.fromCharCode(
+      65 + optionIndex
+    );
+  };
+
+  const registerQuizAttempts =
+    async () => {
+      if (!session?.sessionId) {
+        return;
+      }
+
+      await Promise.all(
+        questions.map(
+          async (question) => {
+            const userAnswer =
+              selectedAnswers[
+                question.id
+              ];
+
+            if (
+              userAnswer ===
+              undefined
+            ) {
+              return;
+            }
+
+            await registerBackendAnswer(
+              session.sessionId as number,
+              {
+                preguntaCodigo:
+                  question.id,
+
+                opcionCodigo:
+                  getOptionCode(
+                    question,
+                    userAnswer
+                  ),
+
+                respuestaTexto:
+                  String(userAnswer),
+              }
+            );
+          }
+        )
+      );
+    };
+
+  const calculateResults = async () => {
+    setIsSubmittingQuiz(
+      true
+    );
+
+    setSubmitError("");
+
     let correctAnswers = 0;
 
     questions.forEach(
@@ -141,16 +227,30 @@ export default function QuizView({
         new Date().toISOString(),
     };
 
-    // IMPORTANTE:
-    // Aquí solo mostramos el resultado.
-    // TODAVÍA NO guardamos en la sesión.
-    setQuizResult(
-      result
-    );
+    try {
+      await registerQuizAttempts();
 
-    setQuizFinished(
-      true
-    );
+      setQuizResult(
+        result
+      );
+
+      setQuizFinished(
+        true
+      );
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "No se pudo registrar el intento de respuesta.";
+
+      setSubmitError(
+        message
+      );
+    } finally {
+      setIsSubmittingQuiz(
+        false
+      );
+    }
   };
 
   // REINTENTAR
@@ -170,6 +270,8 @@ export default function QuizView({
     setQuizResult(
       null
     );
+
+    setSubmitError("");
   };
 
   // FINALIZAR Y CANJEAR INSIGNIA
@@ -515,10 +617,12 @@ export default function QuizView({
                       calculateResults
                     }
                     disabled={
-                      !hasAnsweredCurrent
+                      !hasAnsweredCurrent ||
+                      isSubmittingQuiz
                     }
                     className={`py-2.5 px-6 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                      hasAnsweredCurrent
+                      hasAnsweredCurrent &&
+                      !isSubmittingQuiz
                         ? "bg-[#60A491] hover:bg-[#558F7E] text-white shadow-md cursor-pointer"
                         : "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
                     }`}
@@ -529,13 +633,21 @@ export default function QuizView({
                       size={14}
                     />
 
-                    Entregar Examen
+                    {isSubmittingQuiz
+                      ? "Registrando..."
+                      : "Entregar Examen"}
 
                   </button>
 
                 )}
 
               </div>
+
+              {submitError && (
+                <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-bold">
+                  {submitError}
+                </div>
+              )}
 
             </div>
 

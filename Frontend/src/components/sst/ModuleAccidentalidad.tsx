@@ -15,6 +15,7 @@ import {
   ShieldAlert,
   Flame
 } from 'lucide-react';
+import { useFairSession } from "@/context/FairSessionContext";
 
 interface ModuleAccidentalidadProps {
   onComplete: () => void;
@@ -27,6 +28,9 @@ export default function ModuleAccidentalidad({
   onBackToRoute,
   alreadyCompleted = false
 }: ModuleAccidentalidadProps) {
+  const { registerActivityAttempt } =
+    useFairSession();
+
   // Screen sequence: 1: Contexto -> 2: Contenido (Video) -> 3: Actividad Interactiva
   const [currentScreen, setCurrentScreen] = useState<1 | 2 | 3>(1);
 
@@ -90,6 +94,14 @@ export default function ModuleAccidentalidad({
     const isCorrect = matches.A === 2 && matches.B === 3 && matches.C === 1;
     setHasEvaluated(true);
     setAllCorrect(isCorrect);
+    registerActivityAttempt({
+      moduloCodigo: "accidentalidad",
+      codigoActividad: "accidentalidad-emparejamiento",
+      respuestaJson: {
+        relaciones: matches,
+      },
+      esCorrecta: isCorrect,
+    });
     if (isCorrect) {
       onComplete();
     }

@@ -6,6 +6,7 @@ interface MediaPlaceholderProps {
   title: string;
   badgeLabel?: string;
   description: string;
+  videoSrc?: string;
   helperText?: string;
   onNext: () => void;
   accentColor?: string;
@@ -17,6 +18,7 @@ export default function MediaPlaceholder({
   title,
   badgeLabel = 'ESPACIO MULTIMEDIA',
   description,
+  videoSrc,
   helperText = 'Descubre cómo una oportunidad cotidiana puede convertirse en una mejora real.',
   onNext,
   accentColor = '#5B7F71',
@@ -45,7 +47,20 @@ export default function MediaPlaceholder({
         </span>
       </div>
 
-      {/* Media Mock Player / Visual Canvas */}
+      {videoSrc ? (
+        <div className="rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-inner">
+          <video
+            controls
+            preload="metadata"
+            className="w-full aspect-video bg-black"
+            onPlay={() => setIsPlaying(true)}
+            onEnded={() => setIsPlaying(false)}
+          >
+            <source src={videoSrc} type="video/mp4" />
+            Tu navegador no puede reproducir este video.
+          </video>
+        </div>
+      ) : (
       <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-slate-900 via-stone-800 to-slate-950 border border-slate-800 text-white min-h-[220px] sm:min-h-[280px] flex flex-col items-center justify-center p-6 text-center shadow-inner group">
         {/* Subtle grid pattern background */}
         <div className="absolute inset-0 bg-[radial-gradient(#5B7F71_1px,transparent_1px)] [background-size:16px_16px] opacity-20"></div>
@@ -85,6 +100,7 @@ export default function MediaPlaceholder({
           <span>01:45</span>
         </div>
       </div>
+      )}
 
       {/* Supportive text and proceed button */}
       <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100">

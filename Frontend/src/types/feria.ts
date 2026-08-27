@@ -7,10 +7,15 @@ export interface Badge {
 
 export interface QuizQuestion {
   id: string;
-  type: "multiple-choice" | "true-false" | "situational";
+  type:
+    | "multiple-choice"
+    | "true-false"
+    | "situational";
   question: string;
   options?: string[];
-  correctAnswer: string | boolean;
+  correctAnswer:
+    | string
+    | boolean;
   explanation: string;
 }
 
@@ -18,7 +23,9 @@ export interface Topic {
   id: string;
   name: string;
   description?: string;
-  introType: "video" | "interactive";
+  introType:
+    | "video"
+    | "interactive";
   videoSrc?: string;
   sourceDocs: string[];
   introHtml?: string;
@@ -48,7 +55,10 @@ export interface QuizResult {
   totalQuestions: number;
   correctAnswers: number;
   approved: boolean;
-  answers: Record<string, string | boolean>;
+  answers: Record<
+    string,
+    string | boolean
+  >;
   completedAt: string;
 }
 
@@ -57,7 +67,14 @@ export type TopicProgressStatus =
   | "in_progress"
   | "completed";
 
+export type FairSessionStatus =
+  | "EN_PROGRESO"
+  | "FINALIZADA";
+
 export interface UserSession {
+  sessionId?: number | null;
+  usuarioId?: number | null;
+
   cedula: string;
   area: string;
   fechaEjecucion: string;
@@ -79,6 +96,12 @@ export interface UserSession {
   fechaInicio: string;
 
   fechaFinalizacion: string | null;
+
+  estado?: FairSessionStatus;
+
+  sesionCreada?: boolean;
+
+  sesionRecuperada?: boolean;
 
   score: number;
 }

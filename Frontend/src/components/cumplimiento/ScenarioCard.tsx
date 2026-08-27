@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { CheckCircle2, XCircle, AlertTriangle, ArrowRight, RotateCcw } from 'lucide-react';
+import { useFairSession } from "@/context/FairSessionContext";
 
 export interface ScenarioItem {
   id: string;
@@ -21,6 +22,10 @@ interface ScenarioCardProps {
   isSolved: boolean;
   onNextScenario?: () => void;
   hasNextScenario?: boolean;
+  tracking?: {
+    moduloCodigo: string;
+    codigoActividad: string;
+  };
 }
 
 export default function ScenarioCard({ 
@@ -28,8 +33,11 @@ export default function ScenarioCard({
   onSolve, 
   isSolved,
   onNextScenario,
-  hasNextScenario = false 
+  hasNextScenario = false,
+  tracking
 }: ScenarioCardProps) {
+  const { registerActivityAttempt } = useFairSession();
+
   const [selectedOption, setSelectedOption] = useState<'A' | 'B' | null>(null);
   const [answered, setAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
@@ -51,6 +59,19 @@ export default function ScenarioCard({
 
     const correct = (choice === 'A' && optionAIsCorrect) || (choice === 'B' && !optionAIsCorrect);
     setIsCorrect(correct);
+
+    if (tracking) {
+      registerActivityAttempt({
+        moduloCodigo: tracking.moduloCodigo,
+        codigoActividad: `${tracking.codigoActividad}-${scenario.id}`,
+        respuestaJson: {
+          escenario: scenario.id,
+          opcion: choice,
+          texto: choice === 'A' ? optionAText : optionBText,
+        },
+        esCorrecta: correct,
+      });
+    }
 
     if (correct) {
       onSolve(true);

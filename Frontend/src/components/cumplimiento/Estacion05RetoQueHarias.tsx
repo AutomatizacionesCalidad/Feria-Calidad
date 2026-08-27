@@ -215,6 +215,10 @@ export default function Estacion05RetoQueHarias({
               onSolve={() => handleSolve(scenarios[activeTab].id)}
               isSolved={!!solvedScenarios[scenarios[activeTab].id]}
               hasNextScenario={activeTab < scenarios.length - 1}
+              tracking={{
+                moduloCodigo: "cumplimiento-reto",
+                codigoActividad: "cumplimiento-reto-que-harias",
+              }}
               onNextScenario={() => {
                 if (activeTab < scenarios.length - 1) {
                   setActiveTab(activeTab + 1);

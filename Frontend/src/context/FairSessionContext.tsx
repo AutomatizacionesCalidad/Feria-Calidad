@@ -1,24 +1,21 @@
 "use client";
+
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
+import { QuizResult, UserSession } from "@/types/feria";
 import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  QuizResult,
-  UserSession,
-} from "@/types/feria";
-import {
+  ActivityAttemptPayload,
   clearLocalSession,
+  completeBackendModule,
+  finalizeBackendSession,
   loadLocalSession,
+  mergeBackendSession,
+  registerBackendActivityAttempt,
+  registerBackendBadge,
   saveLocalSession,
+  startBackendModule,
+  startBackendSession,
 } from "@/services/sessionService";
-import {
-  calculateProgress,
-} from "@/utils/progress";
+import { calculateProgress } from "@/utils/progress";
 
 // CONTEXT TYPE
 type FairSessionContextType = {
@@ -32,7 +29,7 @@ type FairSessionContextType = {
 
   startSession: (
     session: UserSession
-  ) => void;
+  ) => Promise<UserSession>;
 
   markTopicInProgress: (
     topicId: string
@@ -67,8 +64,12 @@ type FairSessionContextType = {
   completeCumplimientoStand:
     () => void;
 
+  registerActivityAttempt: (
+    payload: ActivityAttemptPayload
+  ) => void;
+
   finalizeSession:
-    () => void;
+    () => Promise<void>;
 
   closeBadgeModal:
     () => void;
@@ -122,7 +123,7 @@ export function FairSessionProvider({
       null
     );
 
-  // CARGAR SESIÓN
+  // CARGAR SESIÓN LOCAL COMO CACHÉ
   useEffect(() => {
     const storedSession =
       loadLocalSession();
@@ -185,6 +186,18 @@ export function FairSessionProvider({
         badgeId
       );
     }
+
+    if (session?.sessionId) {
+      void registerBackendBadge(
+        session.sessionId,
+        badgeId
+      ).catch((error) => {
+        console.error(
+          `Error registrando insignia ${badgeId} en backend:`,
+          error
+        );
+      });
+    }
   };
 
   const closeBadgeModal =
@@ -194,27 +207,122 @@ export function FairSessionProvider({
       );
     };
 
-  // INICIAR SESIÓN
-  const startSession = (
+  // INICIAR O RECUPERAR SESIÓN EN DJANGO
+  const startSession = async (
     newSession: UserSession
   ) => {
     setUnlockedBadgeId(
       null
     );
 
+    const backendSession =
+      await startBackendSession({
+        cedula:
+          newSession.cedula,
+
+        area:
+          newSession.area,
+
+        fechaEjecucion:
+          newSession.fechaEjecucion,
+      });
+
+    const localCache =
+      loadLocalSession();
+
+    const canReuseLocalProgress =
+      localCache?.cedula ===
+        newSession.cedula &&
+      (localCache.sessionId ===
+        backendSession.sesion.id ||
+        backendSession.sesion_recuperada);
+
+    const baseSession =
+      canReuseLocalProgress
+        ? {
+            ...newSession,
+
+            progreso:
+              localCache.progreso,
+
+            actividadesCompletadas:
+              localCache.actividadesCompletadas,
+
+            insignias:
+              localCache.insignias,
+
+            evaluaciones:
+              localCache.evaluaciones,
+
+            score:
+              localCache.score,
+          }
+        : newSession;
+
+    const updatedSession =
+      mergeBackendSession(
+        baseSession,
+        backendSession
+      );
+
     setSession(
-      newSession
+      updatedSession
     );
 
     saveLocalSession(
-      newSession
+      updatedSession
     );
+
+    return updatedSession;
+  };
+
+  const completeModuleInBackend = (
+    sessionId: number | null | undefined,
+    moduleId: string
+  ) => {
+    if (!sessionId) {
+      return;
+    }
+
+    void completeBackendModule(
+      sessionId,
+      moduleId
+    ).catch((error) => {
+      console.error(
+        `Error completando módulo ${moduleId} en backend:`,
+        error
+      );
+    });
+  };
+
+  const registerActivityAttempt = (
+    payload: ActivityAttemptPayload
+  ) => {
+    const currentSessionId =
+      session?.sessionId;
+
+    if (!currentSessionId) {
+      return;
+    }
+
+    void registerBackendActivityAttempt(
+      currentSessionId,
+      payload
+    ).catch((error) => {
+      console.error(
+        `Error registrando actividad ${payload.codigoActividad} en backend:`,
+        error
+      );
+    });
   };
 
   // MARCAR TEMA EN PROGRESO
   const markTopicInProgress = (
     topicId: string
   ) => {
+    const currentSessionId =
+      session?.sessionId;
+
     updateSession(
       (current) => ({
         ...current,
@@ -227,6 +335,18 @@ export function FairSessionProvider({
         },
       })
     );
+
+    if (currentSessionId) {
+      void startBackendModule(
+        currentSessionId,
+        topicId
+      ).catch((error) => {
+        console.error(
+          `Error iniciando módulo ${topicId} en backend:`,
+          error
+        );
+      });
+    }
   };
 
   // COMPLETAR ACTIVIDAD CALIDAD
@@ -281,6 +401,9 @@ export function FairSessionProvider({
       );
     }
 
+    const currentSessionId =
+      session?.sessionId;
+
     updateSession(
       (current) => {
         const insignias = [
@@ -322,6 +445,21 @@ export function FairSessionProvider({
         };
       }
     );
+
+    if (
+      currentSessionId &&
+      result.approved
+    ) {
+      void completeBackendModule(
+        currentSessionId,
+        result.topicId
+      ).catch((error) => {
+        console.error(
+          `Error completando módulo ${result.topicId} en backend:`,
+          error
+        );
+      });
+    }
   };
 
   // COMPLETAR MÓDULO SST
@@ -332,6 +470,9 @@ export function FairSessionProvider({
     announceBadge(
       badgeId
     );
+
+    const currentSessionId =
+      session?.sessionId;
 
     updateSession(
       (current) => {
@@ -409,6 +550,11 @@ export function FairSessionProvider({
         };
       }
     );
+
+    completeModuleInBackend(
+      currentSessionId,
+      moduleId
+    );
   };
 
   // MEJORAMIENTO - HITO
@@ -416,6 +562,9 @@ export function FairSessionProvider({
     (
       milestoneId: string
     ) => {
+      const currentSessionId =
+        session?.sessionId;
+
       updateSession(
         (current) => {
           if (
@@ -434,8 +583,20 @@ export function FairSessionProvider({
                 ...current.actividadesCompletadas,
                 milestoneId,
               ],
+
+            progreso: {
+              ...current.progreso,
+
+              [milestoneId]:
+                "completed",
+            },
           };
         }
+      );
+
+      completeModuleInBackend(
+        currentSessionId,
+        milestoneId
       );
     };
 
@@ -444,6 +605,9 @@ export function FairSessionProvider({
     () => {
       const badgeId =
         "badge-transformacion-mejora";
+
+      const currentSessionId =
+        session?.sessionId;
 
       announceBadge(
         badgeId
@@ -558,6 +722,18 @@ export function FairSessionProvider({
           };
         }
       );
+
+      [
+        "mejoramiento-sembrando",
+        "mejoramiento-tpm",
+        "mejoramiento-6sigma",
+        "mejoramiento-formula",
+      ].forEach((moduleId) => {
+        completeModuleInBackend(
+          currentSessionId,
+          moduleId
+        );
+      });
     };
 
   // CUMPLIMIENTO - HITO
@@ -565,6 +741,9 @@ export function FairSessionProvider({
     (
       milestoneId: string
     ) => {
+      const currentSessionId =
+        session?.sessionId;
+
       updateSession(
         (current) => {
           if (
@@ -583,8 +762,20 @@ export function FairSessionProvider({
                 ...current.actividadesCompletadas,
                 milestoneId,
               ],
+
+            progreso: {
+              ...current.progreso,
+
+              [milestoneId]:
+                "completed",
+            },
           };
         }
+      );
+
+      completeModuleInBackend(
+        currentSessionId,
+        milestoneId
       );
     };
 
@@ -593,6 +784,9 @@ export function FairSessionProvider({
     () => {
       const badgeId =
         "badge-embajador-cumplimiento";
+
+      const currentSessionId =
+        session?.sessionId;
 
       announceBadge(
         badgeId
@@ -696,26 +890,65 @@ export function FairSessionProvider({
           };
         }
       );
+
+      [
+        "cumplimiento-conceptos",
+        "cumplimiento-linea-etica",
+        "cumplimiento-reto",
+        "cumplimiento-evaluacion",
+      ].forEach((moduleId) => {
+        completeModuleInBackend(
+          currentSessionId,
+          moduleId
+        );
+      });
     };
 
-  // FINALIZAR FERIA
+  // FINALIZAR FERIA EN DJANGO
   const finalizeSession =
-    () => {
-      updateSession(
-        (current) => {
-          if (
-            current.fechaFinalizacion
-          ) {
-            return current;
-          }
+    async () => {
+      if (
+        !session ||
+        session.fechaFinalizacion
+      ) {
+        return;
+      }
 
-          return {
+      if (!session.sessionId) {
+        updateSession(
+          (current) => ({
             ...current,
 
             fechaFinalizacion:
               new Date().toISOString(),
-          };
-        }
+
+            estado:
+              "FINALIZADA",
+          })
+        );
+
+        return;
+      }
+
+      const backendResponse =
+        await finalizeBackendSession(
+          session.sessionId
+        );
+
+      updateSession(
+        (current) => ({
+          ...current,
+
+          estado:
+            backendResponse.sesion.estado ??
+            "FINALIZADA",
+
+          fechaFinalizacion:
+            backendResponse.sesion
+              .fecha_hora_finalizacion ??
+            current.fechaFinalizacion ??
+            new Date().toISOString(),
+        })
       );
     };
 
@@ -781,6 +1014,8 @@ export function FairSessionProvider({
         completeCumplimientoMilestone,
 
         completeCumplimientoStand,
+
+        registerActivityAttempt,
 
         finalizeSession,
 

@@ -1,14 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  Award,
-  CheckCircle2,
-  HelpCircle,
-  Droplets,
-  Search,
-  CheckSquare,
-} from "lucide-react";
+import { ArrowLeft, Award, CheckCircle2, HelpCircle, Droplets, Search, CheckSquare } from "lucide-react";
 import { Area } from "@/types/feria";
 import { useFairSession } from "@/context/FairSessionContext";
 

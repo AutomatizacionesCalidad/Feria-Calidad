@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { CheckCircle2, XCircle, AlertTriangle, ArrowRight, RotateCcw, Sparkles } from 'lucide-react';
+import { useFairSession } from "@/context/FairSessionContext";
 
 export interface MultipleChoiceOption {
   id: string;
@@ -21,6 +22,10 @@ interface MultipleChoiceChallengeProps {
   onSuccess: () => void;
   nextButtonLabel?: string;
   accentColor?: string;
+  tracking?: {
+    moduloCodigo: string;
+    codigoActividad: string;
+  };
 }
 
 export default function MultipleChoiceChallenge({
@@ -34,8 +39,11 @@ export default function MultipleChoiceChallenge({
   incorrectFeedbackMessage,
   onSuccess,
   nextButtonLabel = 'Continuar',
-  accentColor = '#5B7F71'
+  accentColor = '#5B7F71',
+  tracking
 }: MultipleChoiceChallengeProps) {
+  const { registerActivityAttempt } = useFairSession();
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [answered, setAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
@@ -52,6 +60,18 @@ export default function MultipleChoiceChallenge({
     setIsCorrect(
       option.isCorrect
     );
+
+    if (tracking) {
+      registerActivityAttempt({
+        moduloCodigo: tracking.moduloCodigo,
+        codigoActividad: tracking.codigoActividad,
+        respuestaJson: {
+          opcion: option.id,
+          texto: option.text,
+        },
+        esCorrecta: option.isCorrect,
+      });
+    }
   };
 
   const handleRetry = () => {

@@ -14,6 +14,7 @@ import {
   Compass,
   Gauge
 } from 'lucide-react';
+import { useFairSession } from "@/context/FairSessionContext";
 
 interface ModulePESVProps {
   onComplete: () => void;
@@ -22,6 +23,9 @@ interface ModulePESVProps {
 }
 
 export default function ModulePESV({ onComplete, onBackToRoute, alreadyCompleted = false }: ModulePESVProps) {
+  const { registerActivityAttempt } =
+    useFairSession();
+
   // Screen sequence: 1: Contexto -> 2: Contenido (Infografía) -> 3: Pregunta
   const [currentScreen, setCurrentScreen] = useState<1 | 2 | 3>(1);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -33,6 +37,14 @@ export default function ModulePESV({ onComplete, onBackToRoute, alreadyCompleted
     setHasEvaluated(true);
     const correct = option === 'B';
     setIsAnswerCorrect(correct);
+    registerActivityAttempt({
+      moduloCodigo: "pesv",
+      codigoActividad: "pesv-limite-velocidad",
+      respuestaJson: {
+        opcion: option,
+      },
+      esCorrecta: correct,
+    });
     if (correct) {
       onComplete();
     }

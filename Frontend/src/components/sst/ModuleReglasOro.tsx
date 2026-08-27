@@ -13,8 +13,10 @@ import {
   HelpCircle,
   Crown,
   Sparkles,
-  Check
+  Check,
+  Video
 } from 'lucide-react';
+import { useFairSession } from "@/context/FairSessionContext";
 
 interface ModuleReglasOroProps {
   onComplete: () => void;
@@ -27,6 +29,9 @@ export default function ModuleReglasOro({
   onBackToRoute,
   alreadyCompleted = false
 }: ModuleReglasOroProps) {
+  const { registerActivityAttempt } =
+    useFairSession();
+
   // Screen sequence: 1: Contexto -> 2: Contenido (Infografía) -> 3: Pregunta
   const [currentScreen, setCurrentScreen] = useState<1 | 2 | 3>(1);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -38,6 +43,14 @@ export default function ModuleReglasOro({
     setHasEvaluated(true);
     const correct = option === 'B';
     setIsAnswerCorrect(correct);
+    registerActivityAttempt({
+      moduloCodigo: "reglas-oro",
+      codigoActividad: "reglas-oro-proposito",
+      respuestaJson: {
+        opcion: option,
+      },
+      esCorrecta: correct,
+    });
     if (correct) {
       onComplete();
     }
@@ -213,6 +226,30 @@ export default function ModuleReglasOro({
               <p className="text-xs sm:text-sm text-slate-600 font-medium">
                 Identifica las conductas fundamentales que debemos cumplir para trabajar de forma segura.
               </p>
+            </div>
+
+            <div className="bg-slate-950 rounded-3xl p-4 sm:p-5 text-white shadow-lg border border-slate-950 space-y-3">
+              <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
+                <div className="flex items-center gap-2 text-amber-300">
+                  <Video size={16} />
+                  <span>Video - Reglas de Oro</span>
+                </div>
+                <span className="bg-white/10 px-2.5 py-1 rounded-full font-mono text-[11px] text-white">
+                  SST Prebel
+                </span>
+              </div>
+
+              <video
+                controls
+                preload="metadata"
+                className="w-full aspect-video rounded-2xl bg-black border border-white/10"
+              >
+                <source
+                  src="/videos/sst/reglas-oro.mp4"
+                  type="video/mp4"
+                />
+                Tu navegador no puede reproducir este video.
+              </video>
             </div>
 
             {/* Infographic Container with High Fidelity Layout */}

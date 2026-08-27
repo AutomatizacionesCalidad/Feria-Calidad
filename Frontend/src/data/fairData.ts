@@ -28,7 +28,7 @@ export const fairData: FairData = {
           introType: "video",
 
           videoSrc:
-            "/assets/videos/higiene-manos.mp4",
+            "/videos/calidad/higiene-a-todos-los-niveles.mp4",
 
           sourceDocs: [
             "limpieza de manos.pdf",
@@ -109,6 +109,9 @@ export const fairData: FairData = {
 
           introType:
             "interactive",
+
+          videoSrc:
+            "/videos/calidad/material-extra%C3%B1o.mp4",
 
           sourceDocs: [
             "material extraño.pdf",
@@ -221,6 +224,9 @@ export const fairData: FairData = {
 
           introType:
             "interactive",
+
+          videoSrc:
+            "/videos/calidad/registro.mp4",
 
           sourceDocs: [
             "registros.pdf",
