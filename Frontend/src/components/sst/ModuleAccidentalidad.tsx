@@ -7,8 +7,6 @@ import {
   ArrowRight, 
   CheckCircle2, 
   XCircle, 
-  Play, 
-  Pause, 
   Video, 
   HelpCircle,
   Link,
@@ -34,8 +32,6 @@ export default function ModuleAccidentalidad({
   // Screen sequence: 1: Contexto -> 2: Contenido (Video) -> 3: Actividad Interactiva
   const [currentScreen, setCurrentScreen] = useState<1 | 2 | 3>(1);
 
-  // Video state
-  const [isPlaying, setIsPlaying] = useState(false);
   const [hasWatchedVideo, setHasWatchedVideo] = useState(false);
 
   // Interactive matching state
@@ -302,53 +298,21 @@ export default function ModuleAccidentalidad({
                 </span>
               </div>
 
-              {/* Video Screen Simulation */}
-              <div className="relative aspect-video bg-gradient-to-tr from-slate-950 via-slate-900 to-slate-800 rounded-2xl flex flex-col items-center justify-center p-6 text-center border border-white/10 overflow-hidden">
-                {!isPlaying ? (
-                  <div className="space-y-4">
-                    <button
-                      onClick={() => {
-                        setIsPlaying(true);
-                        setHasWatchedVideo(true);
-                      }}
-                      className="w-16 h-16 rounded-full bg-[#F2917E] hover:bg-[#e07560] text-white flex items-center justify-center mx-auto shadow-lg transition-transform hover:scale-105 cursor-pointer"
-                      id="btn-play-video-acc"
-                    >
-                      <Play size={26} className="ml-1" />
-                    </button>
-                    <p className="text-xs text-slate-300 font-medium max-w-sm">
-                      Haz clic para reproducir el video explicativo de prevención de incidentes y actos inseguros.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4 max-w-md w-full animate-fade-in">
-                    <div className="grid grid-cols-3 gap-3 text-left">
-                      <div className="p-3 bg-white/5 border border-white/10 rounded-xl">
-                        <span className="text-[10px] font-bold text-amber-400 block">1. Detectar</span>
-                        <span className="text-[11px] text-slate-300 leading-tight block mt-1">Acto o condición</span>
-                      </div>
-                      <div className="p-3 bg-white/5 border border-white/10 rounded-xl">
-                        <span className="text-[10px] font-bold text-teal-400 block">2. Reportar</span>
-                        <span className="text-[11px] text-slate-300 leading-tight block mt-1">Líder SST</span>
-                      </div>
-                      <div className="p-3 bg-white/5 border border-white/10 rounded-xl">
-                        <span className="text-[10px] font-bold text-emerald-400 block">3. Corregir</span>
-                        <span className="text-[11px] text-slate-300 leading-tight block mt-1">Cero lesiones</span>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-rose-300 italic">
-                      🎬 [Reproduciendo video técnico: <strong>reconocimiento-accidentalidad.mp4</strong>]
-                    </p>
-                    
-                    <button
-                      onClick={() => setIsPlaying(false)}
-                      className="text-xs text-slate-400 hover:text-white underline cursor-pointer"
-                    >
-                      Pausar video
-                    </button>
-                  </div>
-                )}
+              <div className="rounded-2xl overflow-hidden border border-white/10 bg-black">
+                <video
+                  className="w-full aspect-video bg-black"
+                  controls
+                  preload="metadata"
+                  playsInline
+                  onPlay={() => setHasWatchedVideo(true)}
+                  onEnded={() => setHasWatchedVideo(true)}
+                >
+                  <source
+                    src="/videos/sst/accidente-vs-incidente.mp4"
+                    type="video/mp4"
+                  />
+                  Tu navegador no puede reproducir este video.
+                </video>
               </div>
 
               <div className="flex items-center justify-between text-xs text-slate-400 pt-2">
