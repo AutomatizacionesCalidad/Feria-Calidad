@@ -595,15 +595,16 @@ export default function TrainingIntroView({
 
           </div>
 
-          {/* DESCRIPCIÓN */}
-          <div
-            className="text-xs text-slate-600 border-t border-gray-100 pt-6 leading-relaxed"
-            dangerouslySetInnerHTML={{
-              __html:
-                topic.introHtml ??
-                "",
-            }}
-          />
+          {areaId !== "calidad" && (
+            <div
+              className="text-xs text-slate-600 border-t border-gray-100 pt-6 leading-relaxed"
+              dangerouslySetInnerHTML={{
+                __html:
+                  topic.introHtml ??
+                  "",
+              }}
+            />
+          )}
 
           {/* BOTÓN */}
           <div className="flex justify-end pt-4">

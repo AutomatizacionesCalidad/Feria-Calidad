@@ -305,7 +305,7 @@ export const DetectaCorrigeRegistro: React.FC<DetectaCorrigeRegistroProps> = ({ 
               {discoveredErrors.length === totalErrors && (
                 <button
                   onClick={() => setPhase('correct')}
-                  className="w-full sm:w-auto px-5 py-2.5 bg-prebel-blue hover:bg-blue-900 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer animate-bounce"
+                  className="w-full sm:w-auto px-6 py-3 bg-[#40647E] hover:bg-[#2f4d63] border border-[#2f4d63] text-white font-black text-xs rounded-xl shadow-lg shadow-[#40647E]/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>Continuar a Parte 2: Corrige correctamente</span>
                   <ArrowRight size={15} />
@@ -455,7 +455,7 @@ export const DetectaCorrigeRegistro: React.FC<DetectaCorrigeRegistroProps> = ({ 
                       <div className="space-y-1">
                         <span className="text-[10px] text-stone-500 block">Firma autorizada</span>
                         <span className="text-xs font-bold text-slate-800 bg-white px-2 py-1 rounded border border-slate-200 italic font-serif">
-                          M. Rueda
+                          M. García
                         </span>
                       </div>
                       <div className="space-y-1">

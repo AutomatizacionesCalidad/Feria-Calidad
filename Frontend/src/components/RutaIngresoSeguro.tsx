@@ -93,6 +93,50 @@ const LUGGAGE_ITEMS: LuggageItem[] = [
   },
 ];
 
+const BANNED_GARMENTS = [
+  "aretes",
+  "maquillaje",
+];
+
+const NEGRA_REQUIRED_GARMENTS = [
+  "gorro",
+  "bata_corta",
+  "pantalon",
+  "zapatos",
+  "epp",
+  "barbuquero",
+];
+
+const GRIS_REQUIRED_GARMENTS = [
+  "uniforme1",
+  "bata_larga",
+  "tapabocas",
+  "polainas",
+  "epp",
+  "barbuquero",
+];
+
+const GARMENT_NAMES: Record<
+  string,
+  string
+> = {
+  gorro: "Gorro / Cofia",
+  bata_corta: "Bata manga corta",
+  pantalon: "Pantalón de dotación",
+  zapatos:
+    "Calzado industrial cerrado",
+  epp: "Implementos de seguridad",
+  barbuquero:
+    "Barbuquero (si aplica)",
+  uniforme1: "Uniforme 1 (base)",
+  bata_larga:
+    "Bata manga larga / Overol",
+  tapabocas: "Tapabocas sellado",
+  polainas: "Polainas protectoras",
+  aretes: "Aretes decorativos",
+  maquillaje: "Maquillaje de calle",
+};
+
 // COMPONENTE
 export default function RutaIngresoSeguro({
   onComplete,
@@ -187,6 +231,11 @@ export default function RutaIngresoSeguro({
     useState<string | null>(
       null
     );
+
+  const [
+    wrongPestSelections,
+    setWrongPestSelections,
+  ] = useState<string[]>([]);
 
   // ESTACIÓN 1 - HANDLERS
   const handlePlaceItem = (
@@ -286,16 +335,8 @@ export default function RutaIngresoSeguro({
 
   const isNegraComplete =
     () => {
-      const required = [
-        "gorro",
-        "bata_corta",
-        "pantalon",
-        "zapatos",
-        "epp",
-      ];
-
       const hasAllRequired =
-        required.every(
+        NEGRA_REQUIRED_GARMENTS.every(
           (id) =>
             negraGarments.includes(
               id
@@ -322,16 +363,8 @@ export default function RutaIngresoSeguro({
 
   const isGrisComplete =
     () => {
-      const required = [
-        "uniforme1",
-        "bata_larga",
-        "tapabocas",
-        "polainas",
-        "epp",
-      ];
-
       const hasAllRequired =
-        required.every(
+        GRIS_REQUIRED_GARMENTS.every(
           (id) =>
             grisGarments.includes(
               id
@@ -374,6 +407,29 @@ export default function RutaIngresoSeguro({
     );
   };
 
+  const handleSelectPestItem = (
+    itemId: string,
+    isHazard: boolean
+  ) => {
+    if (isHazard) {
+      handleCleanHazard(itemId);
+      return;
+    }
+
+    setWrongPestSelections(
+      (current) =>
+        current.includes(itemId)
+          ? current.filter(
+              (selectedId) =>
+                selectedId !== itemId
+            )
+          : [
+              ...current,
+              itemId,
+            ]
+    );
+  };
+
   const handleSelectFoodDecision =
     (option: string) => {
       setFoodDecision(
@@ -391,6 +447,43 @@ export default function RutaIngresoSeguro({
         "🏆 ¡Ruta de Ingreso Seguro completada con éxito! Controlaste equipaje, vestimenta y prevención de plagas con total rigor."
       );
     };
+
+  const negraBannedSelected =
+    BANNED_GARMENTS.filter(
+      (id) =>
+        negraGarments.includes(id)
+    );
+
+  const negraMissingGarments =
+    NEGRA_REQUIRED_GARMENTS.filter(
+      (id) =>
+        !negraGarments.includes(id)
+    );
+
+  const negraHasSelections =
+    negraGarments.length > 0 ||
+    negraCheckAretes !== null ||
+    negraCheckMaquillaje !== null;
+
+  const negraHasWrongChecks =
+    negraCheckAretes === true ||
+    negraCheckMaquillaje === true;
+
+  const grisBannedSelected =
+    BANNED_GARMENTS.filter(
+      (id) =>
+        grisGarments.includes(id)
+    );
+
+  const grisMissingGarments =
+    GRIS_REQUIRED_GARMENTS.filter(
+      (id) =>
+        !grisGarments.includes(id)
+    );
+
+  const grisHasSelections =
+    grisGarments.length > 0 ||
+    grisSelectedPallet !== null;
 
   return (
     <div className="space-y-6 animate-fade-in font-sans">
@@ -1191,7 +1284,12 @@ export default function RutaIngresoSeguro({
                           )
                         }
                         className={`p-3 rounded-xl border text-left text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
-                          isChecked
+                          isChecked &&
+                          BANNED_GARMENTS.includes(
+                            garment.id
+                          )
+                            ? "bg-rose-50 border-rose-400 text-rose-900"
+                            : isChecked
                             ? "bg-[#40647E]/10 border-[#40647E] text-slate-900"
                             : "bg-white border-slate-200 text-slate-700 hover:border-[#40647E]"
                         }`}
@@ -1216,7 +1314,13 @@ export default function RutaIngresoSeguro({
                         {isChecked && (
                           <Check
                             size={14}
-                            className="text-[#40647E]"
+                            className={
+                              BANNED_GARMENTS.includes(
+                                garment.id
+                              )
+                                ? "text-rose-600"
+                                : "text-[#40647E]"
+                            }
                           />
                         )}
 
@@ -1226,6 +1330,32 @@ export default function RutaIngresoSeguro({
                 )}
 
               </div>
+
+              {negraBannedSelected.length >
+                0 && (
+                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-900 font-semibold leading-relaxed">
+                  ⚠️ Revisa la dotación:{" "}
+                  <strong>
+                    {negraBannedSelected
+                      .map(
+                        (id) =>
+                          GARMENT_NAMES[id]
+                      )
+                      .join(", ")}
+                  </strong>{" "}
+                  no debe seleccionarse para ingresar a Zona Negra.
+                </div>
+              )}
+
+              {negraHasSelections &&
+                negraMissingGarments.length >
+                  0 &&
+                negraBannedSelected.length ===
+                  0 && (
+                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 font-semibold leading-relaxed">
+                    💡 Revisa tu selección: aún falta completar la dotación requerida para esta zona.
+                  </div>
+                )}
 
               {/* PREGUNTAS */}
               <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
@@ -1281,6 +1411,20 @@ export default function RutaIngresoSeguro({
 
                     </div>
 
+                    {negraCheckAretes ===
+                      true && (
+                      <p className="text-[11px] text-rose-800 font-semibold bg-rose-50 border border-rose-100 rounded-lg p-2">
+                        ⚠️ Revisa esta respuesta: los aretes no pueden ingresar.
+                      </p>
+                    )}
+
+                    {negraCheckAretes ===
+                      false && (
+                      <p className="text-[11px] text-emerald-800 font-semibold bg-emerald-50 border border-emerald-100 rounded-lg p-2">
+                        ✅ Correcto: los aretes deben retirarse antes de ingresar.
+                      </p>
+                    )}
+
                   </div>
 
                   {/* MAQUILLAJE */}
@@ -1328,9 +1472,33 @@ export default function RutaIngresoSeguro({
 
                     </div>
 
+                    {negraCheckMaquillaje ===
+                      true && (
+                      <p className="text-[11px] text-rose-800 font-semibold bg-rose-50 border border-rose-100 rounded-lg p-2">
+                        ⚠️ Revisa esta respuesta: el maquillaje de calle no puede ingresar.
+                      </p>
+                    )}
+
+                    {negraCheckMaquillaje ===
+                      false && (
+                      <p className="text-[11px] text-emerald-800 font-semibold bg-emerald-50 border border-emerald-100 rounded-lg p-2">
+                        ✅ Correcto: el ingreso maquillado no está permitido.
+                      </p>
+                    )}
+
                   </div>
 
                 </div>
+
+                {negraHasSelections &&
+                  !isNegraComplete() &&
+                  (negraBannedSelected.length >
+                    0 ||
+                    negraHasWrongChecks) && (
+                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 font-semibold leading-relaxed">
+                    Para avanzar, revisa que no haya elementos restringidos y valida nuevamente las respuestas rápidas.
+                  </div>
+                )}
 
                 <p className="text-[11px] text-slate-500 italic">
                   💡 Evalúa cada elemento de acuerdo con las condiciones de ingreso establecidas para la zona.
@@ -1466,7 +1634,12 @@ export default function RutaIngresoSeguro({
                             )
                           }
                           className={`p-3 rounded-xl border text-left text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
-                            isChecked
+                            isChecked &&
+                            BANNED_GARMENTS.includes(
+                              garment.id
+                            )
+                              ? "bg-rose-50 border-rose-400 text-rose-900"
+                              : isChecked
                               ? "bg-[#40647E]/10 border-[#40647E] text-slate-900"
                               : "bg-white border-slate-200 text-slate-700 hover:border-[#40647E]"
                           }`}
@@ -1491,7 +1664,13 @@ export default function RutaIngresoSeguro({
                           {isChecked && (
                             <Check
                               size={14}
-                              className="text-[#40647E]"
+                              className={
+                                BANNED_GARMENTS.includes(
+                                  garment.id
+                                )
+                                  ? "text-rose-600"
+                                  : "text-[#40647E]"
+                              }
                             />
                           )}
 
@@ -1501,6 +1680,32 @@ export default function RutaIngresoSeguro({
                   )}
 
                 </div>
+
+                {grisBannedSelected.length >
+                  0 && (
+                  <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-900 font-semibold leading-relaxed">
+                    ⚠️ Revisa la dotación:{" "}
+                    <strong>
+                      {grisBannedSelected
+                        .map(
+                          (id) =>
+                            GARMENT_NAMES[id]
+                        )
+                        .join(", ")}
+                    </strong>{" "}
+                    no debe acompañarte hacia la Zona Gris.
+                  </div>
+                )}
+
+                {grisHasSelections &&
+                  grisMissingGarments.length >
+                    0 &&
+                  grisBannedSelected.length ===
+                    0 && (
+                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 font-semibold leading-relaxed">
+                      💡 Revisa tu selección: aún falta completar la dotación requerida para esta zona.
+                    </div>
+                  )}
 
               </div>
 
@@ -1598,6 +1803,19 @@ export default function RutaIngresoSeguro({
                       ⚠️ Revisa tu selección. Ese material puede representar un riesgo de contaminación.
                     </p>
                   )}
+
+                {grisHasSelections &&
+                  !isGrisComplete() &&
+                  (grisBannedSelected.length >
+                    0 ||
+                    (grisSelectedPallet !==
+                      null &&
+                      grisSelectedPallet !==
+                        "plastica")) && (
+                  <div className="p-3 bg-amber-100/70 border border-amber-300 rounded-xl text-xs text-amber-950 font-semibold leading-relaxed">
+                    Para avanzar, revisa que la dotación y el material seleccionado correspondan a las condiciones de la Zona Gris.
+                  </div>
+                )}
 
               </div>
 
@@ -1757,6 +1975,11 @@ export default function RutaIngresoSeguro({
                       item.id
                     );
 
+                  const isWrongSelected =
+                    wrongPestSelections.includes(
+                      item.id
+                    );
+
                   if (
                     isCleaned
                   ) {
@@ -1780,16 +2003,17 @@ export default function RutaIngresoSeguro({
                         item.id
                       }
                       type="button"
-                      onClick={() => {
-                        if (
+                      onClick={() =>
+                        handleSelectPestItem(
+                          item.id,
                           item.isHazard
-                        ) {
-                          handleCleanHazard(
-                            item.id
-                          );
-                        }
-                      }}
-                      className="p-3 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-1 cursor-pointer shadow-sm hover:scale-105 active:scale-95 bg-white border-slate-200 hover:border-teal-400"
+                        )
+                      }
+                      className={`p-3 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-1 cursor-pointer shadow-sm hover:scale-105 active:scale-95 ${
+                        isWrongSelected
+                          ? "bg-rose-50 border-rose-300 text-rose-900"
+                          : "bg-white border-slate-200 hover:border-teal-400"
+                      }`}
                     >
 
                       <span className="text-3xl">
@@ -1798,11 +2022,24 @@ export default function RutaIngresoSeguro({
                         }
                       </span>
 
-                      <span className="text-xs font-bold text-slate-800">
+                      <span
+                        className={`text-xs font-bold ${
+                          isWrongSelected
+                            ? "text-rose-900"
+                            : "text-slate-800"
+                        }`}
+                      >
                         {
                           item.name
                         }
                       </span>
+
+                      {isWrongSelected && (
+                        <span className="text-[10px] font-bold text-rose-700 flex items-center gap-1">
+                          <X size={11} />
+                          Revisa
+                        </span>
+                      )}
 
                     </button>
                   );
@@ -1810,6 +2047,13 @@ export default function RutaIngresoSeguro({
               )}
 
             </div>
+
+            {wrongPestSelections.length >
+              0 && (
+              <div className="mt-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-900 font-semibold leading-relaxed">
+                ⚠️ Revisa tu selección: algunos elementos no favorecen la presencia de plagas si están limpios, cerrados o guardados donde corresponde.
+              </div>
+            )}
 
             {cleanedHazards.length ===
               3 && (

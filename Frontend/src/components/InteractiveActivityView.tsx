@@ -200,10 +200,6 @@ export default function InteractiveActivityView({
           Volver a Introducción
         </button>
 
-        <span className="text-[11px] font-bold text-slate-500 uppercase">
-          ACTIVIDAD PRÁCTICA DE REFUERZO
-        </span>
-
       </div>
 
       {/* CARD */}
@@ -214,15 +210,8 @@ export default function InteractiveActivityView({
 
           <div>
 
-            <span className="text-[10px] bg-white/20 px-2.5 py-0.5 rounded-full font-black text-white/90">
-
-              Pabellón de Simulación Activa
-
-            </span>
-
             <h3 className="text-base sm:text-lg font-bold mt-1.5">
 
-              Demostración Práctica:{" "}
               {
                 topic.name
               }

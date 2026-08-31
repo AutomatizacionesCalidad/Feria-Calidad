@@ -8,11 +8,12 @@ import {
   ArrowRight, 
   CheckCircle2, 
   XCircle, 
-  ImageIcon, 
+  Download,
+  ExternalLink,
+  FileText,
   HelpCircle,
   ShieldCheck,
-  Compass,
-  Gauge
+  Compass
 } from 'lucide-react';
 import { useFairSession } from "@/context/FairSessionContext";
 
@@ -25,6 +26,12 @@ interface ModulePESVProps {
 export default function ModulePESV({ onComplete, onBackToRoute, alreadyCompleted = false }: ModulePESVProps) {
   const { registerActivityAttempt } =
     useFairSession();
+
+  const pesvInfographicUrl =
+    "/documentos/sst/infografia-pesv.pdf";
+
+  const pesvInfographicImageUrl =
+    "/image/sst/infografia-pesv.png";
 
   // Screen sequence: 1: Contexto -> 2: Contenido (Infografía) -> 3: Pregunta
   const [currentScreen, setCurrentScreen] = useState<1 | 2 | 3>(1);
@@ -230,66 +237,51 @@ export default function ModulePESV({ onComplete, onBackToRoute, alreadyCompleted
               </p>
             </div>
 
-            {/* Infographic Container with High Fidelity Layout */}
-            <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50 border-2 border-dashed border-[#60A491]/40 rounded-3xl p-6 sm:p-8 shadow-sm">
-              <div className="max-w-2xl mx-auto space-y-6">
-                
-                <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-                  <div className="flex items-center gap-2">
-                    <ImageIcon className="text-[#4E8777]" size={20} />
-                    <span className="font-title text-sm font-bold text-slate-800 uppercase">
-                      Espacio Infográfico: Guía de Movilidad Segura Prebel
+            <div className="bg-slate-50 border border-emerald-200 rounded-3xl p-4 sm:p-5 shadow-sm space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-[#4E8777] flex items-center justify-center border border-emerald-200">
+                    <FileText size={20} />
+                  </div>
+
+                  <div>
+                    <span className="font-title text-sm font-bold text-slate-800 uppercase block">
+                      Guía de Movilidad Segura Prebel
+                    </span>
+                    <span className="text-[11px] text-slate-500 font-semibold">
+                      Infografía visual
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold">
-                    PESV 2026
-                  </span>
                 </div>
 
-                {/* Simulated Infographic Panels */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 bg-white border border-slate-200 rounded-2xl shadow-xs space-y-2">
-                    <div className="flex items-center gap-2 text-[#4E8777] font-title font-bold text-xs">
-                      <Gauge size={16} />
-                      1. Velocidad Controlada
-                    </div>
-                    <p className="text-[11px] text-slate-600 leading-relaxed">
-                      El límite máximo al interior de las sedes es de <strong>15 km/h</strong>. Reduce la velocidad ante pasos peatonales y cruces.
-                    </p>
-                  </div>
+                <div className="flex flex-wrap gap-2">
+                  <a
+                    href={pesvInfographicUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:border-[#60A491] hover:text-[#3B6B5E] text-xs font-bold inline-flex items-center gap-1.5 transition-all"
+                  >
+                    <ExternalLink size={14} />
+                    Abrir
+                  </a>
 
-                  <div className="p-4 bg-white border border-slate-200 rounded-2xl shadow-xs space-y-2">
-                    <div className="flex items-center gap-2 text-emerald-700 font-title font-bold text-xs">
-                      🚶 2. Prioridad al Peatón
-                    </div>
-                    <p className="text-[11px] text-slate-600 leading-relaxed">
-                      Transita siempre por los senderos peatonales señalizados. Nunca cruces por zonas de maniobra de montacargas.
-                    </p>
-                  </div>
-
-                  <div className="p-4 bg-white border border-slate-200 rounded-2xl shadow-xs space-y-2">
-                    <div className="flex items-center gap-2 text-amber-700 font-title font-bold text-xs">
-                      🔒 3. Cinturón y Casco
-                    </div>
-                    <p className="text-[11px] text-slate-600 leading-relaxed">
-                      Uso obligatorio de cinturón de seguridad en vehículos y casco reglamentario abrochado en motocicletas y bicicletas.
-                    </p>
-                  </div>
-
-                  <div className="p-4 bg-white border border-slate-200 rounded-2xl shadow-xs space-y-2">
-                    <div className="flex items-center gap-2 text-blue-700 font-title font-bold text-xs">
-                      📵 4. Cero Distracciones
-                    </div>
-                    <p className="text-[11px] text-slate-600 leading-relaxed">
-                      Prohibido el uso del teléfono móvil mientras se conduce o se camina por vías vehiculares internas.
-                    </p>
-                  </div>
+                  <a
+                    href={pesvInfographicUrl}
+                    download
+                    className="px-3 py-2 rounded-xl bg-[#60A491] hover:bg-[#4E8777] text-white text-xs font-bold inline-flex items-center gap-1.5 transition-all shadow-sm"
+                  >
+                    <Download size={14} />
+                    Descargar
+                  </a>
                 </div>
+              </div>
 
-                <div className="text-center p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-xs font-semibold text-emerald-900">
-                  💡 Recordatorio: La inspección preoperacional de tu vehículo o motocicleta es obligatoria antes de iniciar la marcha.
-                </div>
-
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-inner">
+                <img
+                  src={pesvInfographicImageUrl}
+                  alt="Infografía PESV - guía de movilidad segura Prebel"
+                  className="w-full h-auto block"
+                />
               </div>
             </div>
 

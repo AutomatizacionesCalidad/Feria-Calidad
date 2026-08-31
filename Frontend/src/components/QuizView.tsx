@@ -687,36 +687,6 @@ export default function QuizView({
 
                 </h4>
 
-                <p className="text-xs text-slate-500 mt-1">
-
-                  Has respondido correctamente{" "}
-
-                  <strong>
-                    {
-                      quizResult?.correctAnswers
-                    }
-                  </strong>{" "}
-
-                  de{" "}
-
-                  <strong>
-                    {
-                      totalQuestions
-                    }
-                  </strong>{" "}
-
-                  preguntas.
-
-                </p>
-
-                <p className="text-xs text-stone-500 italic mt-3 leading-snug">
-                  Puntaje mínimo requerido:{" "}
-                  <strong>
-                    80%
-                  </strong>
-                  .
-                </p>
-
               </div>
 
               {/* REVISIÓN */}
