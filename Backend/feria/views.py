@@ -1,10 +1,10 @@
-from django.db import transaction
 from django.utils import timezone
 from rest_framework.permissions import IsAdminUser
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from participantes.models import SesionFeria
+from .sqlite_queue import sqlite_write_transaction
 from .models import (
     Insignia,
     InsigniaGanada,
@@ -23,7 +23,7 @@ class IniciarModuloView(APIView):
     Si ya está iniciado o completado, no duplica nada.
     """
 
-    @transaction.atomic
+    @sqlite_write_transaction()
     def post(self, request, sesion_id, modulo_codigo):
         try:
             sesion = SesionFeria.objects.get(
@@ -163,7 +163,7 @@ class CompletarModuloView(APIView):
     Si nunca fue iniciado, asigna hora de inicio y fin.
     """
 
-    @transaction.atomic
+    @sqlite_write_transaction()
     def post(self, request, sesion_id, modulo_codigo):
         try:
             sesion = SesionFeria.objects.get(
@@ -288,7 +288,7 @@ class RegistrarIntentoRespuestaView(APIView):
     - fecha y hora real del servidor
     """
 
-    @transaction.atomic
+    @sqlite_write_transaction()
     def post(self, request, sesion_id):
         try:
             sesion = (
@@ -447,7 +447,7 @@ class RegistrarIntentoActividadView(APIView):
     El backend calcula el numero de intento y usa la hora real del servidor.
     """
 
-    @transaction.atomic
+    @sqlite_write_transaction()
     def post(self, request, sesion_id):
         try:
             sesion = (
@@ -588,7 +588,7 @@ class GanarInsigniaView(APIView):
     Si la insignia ya habia sido ganada, no crea duplicados.
     """
 
-    @transaction.atomic
+    @sqlite_write_transaction()
     def post(self, request, sesion_id, insignia_codigo):
         try:
             sesion = (

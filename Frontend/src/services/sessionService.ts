@@ -223,6 +223,24 @@ function buildApiUrl(path: string): string {
   return `${baseUrl}${path}`;
 }
 
+let backendWriteQueue: Promise<unknown> =
+  Promise.resolve();
+
+function enqueueBackendWrite<T>(
+  operation: () => Promise<T>
+): Promise<T> {
+  const queuedOperation =
+    backendWriteQueue.then(
+      operation,
+      operation
+    );
+
+  backendWriteQueue =
+    queuedOperation.catch(() => undefined);
+
+  return queuedOperation;
+}
+
 async function parseApiError(
   response: Response
 ): Promise<string> {
@@ -250,65 +268,69 @@ async function parseApiError(
 export async function startBackendSession(
   payload: StartFairSessionPayload
 ): Promise<StartFairSessionResponse> {
-  const response = await fetch(
-    buildApiUrl(
-      "/api/feria/sesiones/iniciar/"
-    ),
-    {
-      method: "POST",
-      headers: {
-        "Content-Type":
-          "application/json",
-      },
-      body: JSON.stringify({
-        cedula: payload.cedula,
-        area: payload.area,
-        fecha_ejecucion:
-          payload.fechaEjecucion,
-      }),
-    }
-  );
-
-  if (!response.ok) {
-    const message =
-      await parseApiError(response);
-
-    throw new Error(
-      message ||
-        "No se pudo iniciar la sesión en el backend."
+  return enqueueBackendWrite(async () => {
+    const response = await fetch(
+      buildApiUrl(
+        "/api/feria/sesiones/iniciar/"
+      ),
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          cedula: payload.cedula,
+          area: payload.area,
+          fecha_ejecucion:
+            payload.fechaEjecucion,
+        }),
+      }
     );
-  }
 
-  return (
-    (await response.json()) as StartFairSessionResponse
-  );
+    if (!response.ok) {
+      const message =
+        await parseApiError(response);
+
+      throw new Error(
+        message ||
+          "No se pudo iniciar la sesión en el backend."
+      );
+    }
+
+    return (
+      (await response.json()) as StartFairSessionResponse
+    );
+  });
 }
 
 export async function finalizeBackendSession(
   sessionId: number
 ): Promise<FinalizeFairSessionResponse> {
-  const response = await fetch(
-    buildApiUrl(
-      `/api/feria/sesiones/${sessionId}/finalizar/`
-    ),
-    {
-      method: "POST",
-    }
-  );
-
-  if (!response.ok) {
-    const message =
-      await parseApiError(response);
-
-    throw new Error(
-      message ||
-        "No se pudo finalizar la sesión en el backend."
+  return enqueueBackendWrite(async () => {
+    const response = await fetch(
+      buildApiUrl(
+        `/api/feria/sesiones/${sessionId}/finalizar/`
+      ),
+      {
+        method: "POST",
+      }
     );
-  }
 
-  return (
-    (await response.json()) as FinalizeFairSessionResponse
-  );
+    if (!response.ok) {
+      const message =
+        await parseApiError(response);
+
+      throw new Error(
+        message ||
+          "No se pudo finalizar la sesión en el backend."
+      );
+    }
+
+    return (
+      (await response.json()) as FinalizeFairSessionResponse
+    );
+  });
 }
 
 type BackendModuleProgress = {
@@ -332,166 +354,176 @@ export async function startBackendModule(
   sessionId: number,
   moduleCode: string
 ): Promise<BackendModuleProgress> {
-  const response = await fetch(
-    buildApiUrl(
-      `/api/feria/sesiones/${sessionId}/modulos/${moduleCode}/iniciar/`
-    ),
-    {
-      method: "POST",
-    }
-  );
-
-  if (!response.ok) {
-    const message =
-      await parseApiError(response);
-
-    throw new Error(
-      message ||
-        "No se pudo iniciar el módulo en el backend."
+  return enqueueBackendWrite(async () => {
+    const response = await fetch(
+      buildApiUrl(
+        `/api/feria/sesiones/${sessionId}/modulos/${moduleCode}/iniciar/`
+      ),
+      {
+        method: "POST",
+      }
     );
-  }
 
-  return (
-    (await response.json()) as BackendModuleProgress
-  );
+    if (!response.ok) {
+      const message =
+        await parseApiError(response);
+
+      throw new Error(
+        message ||
+          "No se pudo iniciar el módulo en el backend."
+      );
+    }
+
+    return (
+      (await response.json()) as BackendModuleProgress
+    );
+  });
 }
 
 export async function completeBackendModule(
   sessionId: number,
   moduleCode: string
 ): Promise<BackendModuleProgress> {
-  const response = await fetch(
-    buildApiUrl(
-      `/api/feria/sesiones/${sessionId}/modulos/${moduleCode}/completar/`
-    ),
-    {
-      method: "POST",
-    }
-  );
-
-  if (!response.ok) {
-    const message =
-      await parseApiError(response);
-
-    throw new Error(
-      message ||
-        "No se pudo completar el módulo en el backend."
+  return enqueueBackendWrite(async () => {
+    const response = await fetch(
+      buildApiUrl(
+        `/api/feria/sesiones/${sessionId}/modulos/${moduleCode}/completar/`
+      ),
+      {
+        method: "POST",
+      }
     );
-  }
 
-  return (
-    (await response.json()) as BackendModuleProgress
-  );
+    if (!response.ok) {
+      const message =
+        await parseApiError(response);
+
+      throw new Error(
+        message ||
+          "No se pudo completar el módulo en el backend."
+      );
+    }
+
+    return (
+      (await response.json()) as BackendModuleProgress
+    );
+  });
 }
 
 export async function registerBackendAnswer(
   sessionId: number,
   payload: RegisterAnswerPayload
 ): Promise<RegisterAnswerResponse> {
-  const response = await fetch(
-    buildApiUrl(
-      `/api/feria/sesiones/${sessionId}/respuestas/`
-    ),
-    {
-      method: "POST",
-      headers: {
-        "Content-Type":
-          "application/json",
-      },
-      body: JSON.stringify({
-        pregunta_codigo:
-          payload.preguntaCodigo,
-        opcion_codigo:
-          payload.opcionCodigo,
-        respuesta_texto:
-          payload.respuestaTexto,
-      }),
-    }
-  );
-
-  if (!response.ok) {
-    const message =
-      await parseApiError(response);
-
-    throw new Error(
-      message ||
-        "No se pudo registrar la respuesta en el backend."
+  return enqueueBackendWrite(async () => {
+    const response = await fetch(
+      buildApiUrl(
+        `/api/feria/sesiones/${sessionId}/respuestas/`
+      ),
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          pregunta_codigo:
+            payload.preguntaCodigo,
+          opcion_codigo:
+            payload.opcionCodigo,
+          respuesta_texto:
+            payload.respuestaTexto,
+        }),
+      }
     );
-  }
 
-  return (
-    (await response.json()) as RegisterAnswerResponse
-  );
+    if (!response.ok) {
+      const message =
+        await parseApiError(response);
+
+      throw new Error(
+        message ||
+          "No se pudo registrar la respuesta en el backend."
+      );
+    }
+
+    return (
+      (await response.json()) as RegisterAnswerResponse
+    );
+  });
 }
 
 export async function registerBackendActivityAttempt(
   sessionId: number,
   payload: ActivityAttemptPayload
 ): Promise<RegisterActivityAttemptResponse> {
-  const response = await fetch(
-    buildApiUrl(
-      `/api/feria/sesiones/${sessionId}/actividades/`
-    ),
-    {
-      method: "POST",
-      headers: {
-        "Content-Type":
-          "application/json",
-      },
-      body: JSON.stringify({
-        modulo_codigo:
-          payload.moduloCodigo,
-        codigo_actividad:
-          payload.codigoActividad,
-        respuesta_json:
-          payload.respuestaJson,
-        es_correcta:
-          payload.esCorrecta,
-      }),
-    }
-  );
-
-  if (!response.ok) {
-    const message =
-      await parseApiError(response);
-
-    throw new Error(
-      message ||
-        "No se pudo registrar la actividad en el backend."
+  return enqueueBackendWrite(async () => {
+    const response = await fetch(
+      buildApiUrl(
+        `/api/feria/sesiones/${sessionId}/actividades/`
+      ),
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          modulo_codigo:
+            payload.moduloCodigo,
+          codigo_actividad:
+            payload.codigoActividad,
+          respuesta_json:
+            payload.respuestaJson,
+          es_correcta:
+            payload.esCorrecta,
+        }),
+      }
     );
-  }
 
-  return (
-    (await response.json()) as RegisterActivityAttemptResponse
-  );
+    if (!response.ok) {
+      const message =
+        await parseApiError(response);
+
+      throw new Error(
+        message ||
+          "No se pudo registrar la actividad en el backend."
+      );
+    }
+
+    return (
+      (await response.json()) as RegisterActivityAttemptResponse
+    );
+  });
 }
 
 export async function registerBackendBadge(
   sessionId: number,
   badgeCode: string
 ): Promise<RegisterBadgeResponse> {
-  const response = await fetch(
-    buildApiUrl(
-      `/api/feria/sesiones/${sessionId}/insignias/${badgeCode}/ganar/`
-    ),
-    {
-      method: "POST",
-    }
-  );
-
-  if (!response.ok) {
-    const message =
-      await parseApiError(response);
-
-    throw new Error(
-      message ||
-        "No se pudo registrar la insignia en el backend."
+  return enqueueBackendWrite(async () => {
+    const response = await fetch(
+      buildApiUrl(
+        `/api/feria/sesiones/${sessionId}/insignias/${badgeCode}/ganar/`
+      ),
+      {
+        method: "POST",
+      }
     );
-  }
 
-  return (
-    (await response.json()) as RegisterBadgeResponse
-  );
+    if (!response.ok) {
+      const message =
+        await parseApiError(response);
+
+      throw new Error(
+        message ||
+          "No se pudo registrar la insignia en el backend."
+      );
+    }
+
+    return (
+      (await response.json()) as RegisterBadgeResponse
+    );
+  });
 }
 
 export async function getBackendSessionSummary(

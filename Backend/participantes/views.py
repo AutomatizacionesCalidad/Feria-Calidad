@@ -1,8 +1,8 @@
-from django.db import transaction
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from feria.sqlite_queue import sqlite_write_transaction
 from feria.models import InsigniaGanada, Modulo, ProgresoModulo
 from .models import Usuario, SesionFeria
 from .serializers import IniciarSesionSerializer
@@ -91,7 +91,7 @@ class IniciarSesionFeriaView(APIView):
     - Al crear una nueva sesión, se inicializan los módulos.
     """
 
-    @transaction.atomic
+    @sqlite_write_transaction()
     def post(self, request):
         serializer = IniciarSesionSerializer(
             data=request.data
@@ -275,7 +275,7 @@ class FinalizarSesionFeriaView(APIView):
     Finaliza una SesionFeria activa.
     """
 
-    @transaction.atomic
+    @sqlite_write_transaction()
     def post(self, request, sesion_id):
         try:
             sesion = (
