@@ -182,6 +182,7 @@ export default function Tema03SeisSigma({
           title="Video – 6 Sigma + Lean"
           description="Conoce cómo el análisis estructurado, la estadística y la priorización ayudan a resolver los problemas complejos de mayor impacto."
           helperText="Conoce cómo el análisis y la priorización ayudan a resolver problemas complejos."
+          videoSrc="/videos/mejoramiento/seis-sigma-lean.mp4"
           onNext={onNext}
           nextButtonLabel="Continuar a la Síntesis y Reto Final"
           accentColor="#2A597A"

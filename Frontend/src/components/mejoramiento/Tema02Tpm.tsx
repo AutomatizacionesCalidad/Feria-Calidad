@@ -76,7 +76,7 @@ export default function Tema02Tpm({
             
             {/* Core Premise */}
             <p className="text-slate-700 text-sm sm:text-base leading-relaxed font-medium">
-              <strong className="text-slate-900 font-bold">TPM</strong> busca que las personas se conviertan en verdaderos <strong>“dueños” de sus máquinas y procesos</strong>. El operador deja de ser únicamente quien ejecuta una tarea y se convierte también en una fuente activa de prevención, cuidado y mejora.
+              <strong className="text-slate-900 font-bold">TPM</strong> busca que las personas se conviertan en verdaderos <strong>“dueños” de sus máquinas y procesos</strong>. El operador deja de ser únicamente quien ejecuta una tarea y se convierte también en una fuente activa de prevención, cuidado y mejora, teniendo como herramienta principal para lograrlo la implementación de las 5´s para que la transformación del proceso y su evolución les permita llegar a la excelencia.
             </p>
 
             {/* Visual Transformation: Antes -> TPM -> Después */}
@@ -192,6 +192,7 @@ export default function Tema02Tpm({
           title="TPM: cuidar, prevenir y mejorar"
           description="Conoce cómo el empoderamiento de las personas y el mantenimiento autónomo ayudan a sostener la mejora de los procesos en planta."
           helperText="Conoce cómo el empoderamiento de las personas ayuda a sostener la mejora del proceso."
+          videoSrc="/videos/mejoramiento/tpm-5s.mp4"
           onNext={() => setSubStep('activity')}
           accentColor="#E5A93C"
           badgeLabel="ESPACIO MULTIMEDIA · TPM"

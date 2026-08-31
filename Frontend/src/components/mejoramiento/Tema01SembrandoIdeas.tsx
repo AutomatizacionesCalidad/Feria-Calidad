@@ -150,6 +150,7 @@ export default function Tema01SembrandoIdeas({
           title="Contenido – Sembrando Ideas"
           description="Descubre cómo una oportunidad cotidiana puede convertirse en una mejora real a través de la participación ágil de los equipos."
           helperText="Descubre cómo una oportunidad cotidiana puede convertirse en una mejora real."
+          videoSrc="/videos/mejoramiento/sembrando-ideas.mp4"
           onNext={onNext}
           nextButtonLabel="Continuar al Tema 02 – TPM"
           accentColor="#5B7F71"
