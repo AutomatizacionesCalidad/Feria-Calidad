@@ -119,24 +119,24 @@ class IniciarSesionFeriaView(APIView):
             )
         )
         # 2. BUSCAR SESIÓN ACTIVA
-        sesion_activa = (
+        sesion_existente = (
             SesionFeria.objects
             .filter(
                 usuario=usuario,
-                estado=SesionFeria.Estado.EN_PROGRESO,
             )
             .order_by(
-                "-fecha_hora_inicio"
+                "-fecha_hora_inicio",
+                "-id",
             )
             .first()
         )
 
         # 3. SI YA EXISTE SESIÓN ACTIVA → RECUPERAR
-        if sesion_activa:
+        if sesion_existente:
             progresos_count = (
                 ProgresoModulo.objects
                 .filter(
-                    sesion=sesion_activa
+                    sesion=sesion_existente
                 )
                 .count()
             )
@@ -160,18 +160,18 @@ class IniciarSesionFeriaView(APIView):
                     },
 
                     "sesion": {
-                        "id": sesion_activa.id,
-                        "area": sesion_activa.area,
+                        "id": sesion_existente.id,
+                        "area": sesion_existente.area,
                         "fecha_ejecucion": (
-                            sesion_activa.fecha_ejecucion
+                            sesion_existente.fecha_ejecucion
                         ),
                         "fecha_hora_inicio": (
-                            sesion_activa.fecha_hora_inicio
+                            sesion_existente.fecha_hora_inicio
                         ),
                         "fecha_hora_finalizacion": (
-                            sesion_activa.fecha_hora_finalizacion
+                            sesion_existente.fecha_hora_finalizacion
                         ),
-                        "estado": sesion_activa.estado,
+                        "estado": sesion_existente.estado,
                     },
 
                     "modulos_inicializados": (
@@ -180,7 +180,7 @@ class IniciarSesionFeriaView(APIView):
 
                     "estado_sesion": (
                         _estado_liviano_sesion(
-                            sesion_activa
+                            sesion_existente
                         )
                     ),
                 },

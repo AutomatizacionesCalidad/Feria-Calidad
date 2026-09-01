@@ -5,7 +5,7 @@ import {
   Calendar,
   CheckCircle2,
   Droplets,
-  RefreshCw,
+  LogOut,
   Search,
   Shield,
   Trophy,
@@ -18,13 +18,11 @@ import {
 import { fairData } from "@/data/fairData";
 import { UserSession } from "@/types/feria";
 import { getUserLevel } from "@/utils/progress";
-import { getFinalPayload } from "@/utils/finalResults";
 
 interface FinalResultsViewProps {
   session: UserSession;
   progressPercentage: number;
-  onRepeatTraining: () => void;
-  onBackToFair: () => void;
+  onExitFair: () => void;
   onFinalize: () => void;
 }
 
@@ -38,8 +36,7 @@ type BadgeInfo = {
 export default function FinalResultsView({
   session,
   progressPercentage,
-  onRepeatTraining,
-  onBackToFair,
+  onExitFair,
   onFinalize,
 }: FinalResultsViewProps) {
   const level =
@@ -158,58 +155,6 @@ export default function FinalResultsView({
         );
     }
   };
-
-  // DESCARGA JSON LOCAL
-  const handleDownloadReport =
-    () => {
-      const payload =
-        getFinalPayload(
-          session,
-          progressPercentage
-        );
-
-      const blob =
-        new Blob(
-          [
-            JSON.stringify(
-              payload,
-              null,
-              2
-            ),
-          ],
-          {
-            type: "application/json",
-          }
-        );
-
-      const url =
-        URL.createObjectURL(
-          blob
-        );
-
-      const anchor =
-        document.createElement(
-          "a"
-        );
-
-      anchor.href =
-        url;
-
-      anchor.download =
-        `feria-prebel-${session.cedula}.json`;
-
-      document.body.appendChild(
-        anchor
-      );
-
-      anchor.click();
-
-      anchor.remove();
-
-      URL.revokeObjectURL(
-        url
-      );
-    };
 
   const isCompleted =
     progressPercentage >= 100;
@@ -549,45 +494,21 @@ export default function FinalResultsView({
                 </div>
               )}
 
-            <div className="flex flex-col sm:flex-row gap-3 justify-between">
+            <div className="flex justify-center">
 
               <button
                 type="button"
                 onClick={
-                  onRepeatTraining
+                  onExitFair
                 }
-                className="py-3 px-5 text-[#F2917E] hover:bg-rose-50 rounded-xl text-xs font-black border border-[#F2917E]/30 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto py-3.5 px-10 bg-[#40647E] hover:bg-[#345369] text-white rounded-xl text-xs font-black shadow-md flex items-center justify-center gap-2 cursor-pointer"
               >
-                <RefreshCw
-                  size={14}
+                <LogOut
+                  size={16}
                 />
 
-                Repetir Entrenamiento
+                Salir de la Feria
               </button>
-
-              <div className="flex flex-col sm:flex-row gap-3">
-
-                <button
-                  type="button"
-                  onClick={
-                    handleDownloadReport
-                  }
-                  className="py-3 px-5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-black border border-slate-300 cursor-pointer"
-                >
-                  Descargar Reporte JSON
-                </button>
-
-                <button
-                  type="button"
-                  onClick={
-                    onBackToFair
-                  }
-                  className="py-3 px-6 bg-[#40647E] hover:bg-[#345369] text-white rounded-xl text-xs font-black cursor-pointer"
-                >
-                  Volver a la Feria
-                </button>
-
-              </div>
             </div>
           </div>
         </div>

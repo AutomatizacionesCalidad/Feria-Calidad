@@ -55,7 +55,7 @@ export default function ResultsPage() {
     return null;
   }
 
-  const handleRepeatTraining =
+  const handleExitFair =
     () => {
       resetTraining();
 
@@ -104,13 +104,8 @@ export default function ResultsPage() {
           onFinalize={
             handleFinalize
           }
-          onRepeatTraining={
-            handleRepeatTraining
-          }
-          onBackToFair={() =>
-            router.push(
-              "/feria"
-            )
+          onExitFair={
+            handleExitFair
           }
         />
       </main>
