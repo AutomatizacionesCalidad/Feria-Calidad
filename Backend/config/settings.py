@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -84,15 +85,58 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        'OPTIONS': {
-            'timeout': 20,
-        },
+DB_ENGINE = os.getenv(
+    "DB_ENGINE",
+    "sqlite",
+).lower()
+
+if DB_ENGINE == "sqlserver":
+    DATABASES = {
+        "default": {
+            "ENGINE": "mssql",
+            "NAME": os.getenv(
+                "DB_NAME",
+                "FeriaCalidad",
+            ),
+            "HOST": os.getenv(
+                "DB_HOST",
+                "localhost",
+            ),
+            "PORT": os.getenv(
+                "DB_PORT",
+                "1433",
+            ),
+            "OPTIONS": {
+                "driver": os.getenv(
+                    "DB_DRIVER",
+                    "ODBC Driver 18 for SQL Server",
+                ),
+                "extra_params": os.getenv(
+                    "DB_EXTRA_PARAMS",
+                    "TrustServerCertificate=yes;",
+                ),
+            },
+        }
     }
-}
+
+    DB_USER = os.getenv("DB_USER")
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
+
+    if DB_USER:
+        DATABASES["default"]["USER"] = DB_USER
+        DATABASES["default"]["PASSWORD"] = (
+            DB_PASSWORD or ""
+        )
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+            "OPTIONS": {
+                "timeout": 20,
+            },
+        }
+    }
 
 
 # Password validation

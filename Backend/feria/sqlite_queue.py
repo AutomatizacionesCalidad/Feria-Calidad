@@ -1,12 +1,13 @@
 import time
 from functools import wraps
 from threading import RLock
-
-from django.db import OperationalError, transaction
-
+from django.db import (
+    OperationalError,
+    connection,
+    transaction,
+)
 
 sqlite_write_lock = RLock()
-
 
 def sqlite_write_transaction(max_attempts=5, base_delay=0.25):
     """
@@ -16,6 +17,10 @@ def sqlite_write_transaction(max_attempts=5, base_delay=0.25):
     def decorator(view_method):
         @wraps(view_method)
         def wrapper(*args, **kwargs):
+            if connection.vendor != "sqlite":
+                with transaction.atomic():
+                    return view_method(*args, **kwargs)
+
             for attempt in range(max_attempts):
                 try:
                     with sqlite_write_lock:
