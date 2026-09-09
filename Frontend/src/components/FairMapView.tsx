@@ -24,9 +24,6 @@ export default function FairMapView() {
     return null;
   }
 
-  const isTrainingStarted =
-    progressPercentage > 0;
-
   const isTrainingCompleted =
     progressPercentage >= 100;
 
@@ -378,23 +375,6 @@ export default function FairMapView() {
 
             Ver Reporte Final
           </button>
-
-          {/* 0% - COMENZAR ENTRENAMIENTO */}
-          {!isTrainingStarted && (
-            <button
-              type="button"
-              onClick={() =>
-                router.push(
-                  "/feria/calidad"
-                )
-              }
-              className="flex-1 md:flex-none py-3 px-6 bg-[#60A491] hover:bg-[#4E8777] text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <CornerDownRight size={15} />
-
-              Comenzar Entrenamiento
-            </button>
-          )}
 
           {/* 100% - TERMINAR FERIA */}
           {isTrainingCompleted &&

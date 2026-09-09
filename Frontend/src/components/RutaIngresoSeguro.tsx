@@ -21,8 +21,7 @@ interface RutaIngresoSeguroProps {
 type LuggageZone =
   | "bolso"
   | "locker"
-  | "restaurante"
-  | "no_ingresa";
+  | "restaurante";
 
 interface LuggageItem {
   id: string;
@@ -79,17 +78,17 @@ const LUGGAGE_ITEMS: LuggageItem[] = [
     id: "cigarrillos",
     name: "Cigarrillos / Tabaco",
     emoji: "🚬",
-    correctZone: "no_ingresa",
+    correctZone: "locker",
     description:
-      "Restringido. Fumar solo en áreas habilitadas de calle y fuera de zonas productivas.",
+      "Debe quedar guardado en el locker antes de ingresar al proceso.",
   },
   {
     id: "maquillaje",
     name: "Maquillaje de calle",
     emoji: "💄",
-    correctZone: "no_ingresa",
+    correctZone: "locker",
     description:
-      "No permitido en zonas negras y grises.",
+      "Debe retirarse y quedar guardado en el locker antes de ingresar a zonas negras o grises.",
   },
 ];
 
@@ -745,7 +744,7 @@ export default function RutaIngresoSeguro({
           )}
 
           {/* DESTINOS */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
             {[
               {
@@ -762,7 +761,7 @@ export default function RutaIngresoSeguro({
                 title:
                   "Locker",
                 description:
-                  "Accesorios personales y celular.",
+                  "Elementos personales que no ingresan al proceso.",
               },
               {
                 id: "restaurante" as const,
@@ -771,14 +770,6 @@ export default function RutaIngresoSeguro({
                   "Restaurante",
                 description:
                   "Alimentos y bebidas del día.",
-              },
-              {
-                id: "no_ingresa" as const,
-                emoji: "⛔",
-                title:
-                  "No ingresa",
-                description:
-                  "Elementos que deben quedar fuera del proceso.",
               },
             ].map(
               (destination) => (
