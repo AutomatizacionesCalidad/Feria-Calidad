@@ -13,6 +13,9 @@ import {
   XCircle,
 } from "lucide-react";
 import { useFairSession } from "@/context/FairSessionContext";
+import {
+  useSwipeNavigation,
+} from "@/hooks/useSwipeNavigation";
 
 interface ModuleReglasOroProps {
   onComplete: () => void;
@@ -80,6 +83,30 @@ export default function ModuleReglasOro({
     setIsAnswerCorrect(false);
   };
 
+  const goToNextScreen = () => {
+    setCurrentScreen((screen) =>
+      screen < 3
+        ? ((screen + 1) as 1 | 2 | 3)
+        : screen
+    );
+  };
+
+  const goToPreviousScreen = () => {
+    setCurrentScreen((screen) =>
+      screen > 1
+        ? ((screen - 1) as 1 | 2 | 3)
+        : screen
+    );
+  };
+
+  const swipeHandlers =
+    useSwipeNavigation({
+      onSwipeLeft:
+        goToNextScreen,
+      onSwipeRight:
+        goToPreviousScreen,
+    });
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8 fade-in">
       <div className="mb-6 flex items-center justify-between">
@@ -119,7 +146,10 @@ export default function ModuleReglasOro({
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden">
+      <div
+        className="bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden touch-pan-y"
+        {...swipeHandlers}
+      >
         <div className="bg-gradient-to-r from-[#c48d28] via-[#E5A93C] to-[#dba032] text-slate-900 p-6 sm:p-8 flex items-center justify-between">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-2xl bg-white/30 backdrop-blur-sm border border-white/40 flex items-center justify-center text-slate-900 shadow-inner">

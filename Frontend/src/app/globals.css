@@ -14,3 +14,261 @@
   --color-lightGrey : #8C96A1
 }
 
+/*
+  Fallback para tablets/navegadores antiguos.
+  Tailwind 4 define su paleta con oklch(); algunos Chrome Android viejos
+  no entienden ese formato y descartan fondos, bordes y textos de color.
+*/
+:root {
+    --color-slate-50: #f8fafc;
+    --color-slate-100: #f1f5f9;
+    --color-slate-200: #e2e8f0;
+    --color-slate-300: #cbd5e1;
+    --color-slate-400: #94a3b8;
+    --color-slate-500: #64748b;
+    --color-slate-600: #475569;
+    --color-slate-700: #334155;
+    --color-slate-800: #1e293b;
+    --color-slate-900: #0f172a;
+    --color-slate-950: #020617;
+
+    --color-gray-50: #f9fafb;
+    --color-gray-100: #f3f4f6;
+    --color-gray-150: #edf0f3;
+    --color-gray-200: #e5e7eb;
+    --color-gray-300: #d1d5db;
+    --color-gray-350: #aeb7c2;
+    --color-gray-400: #9ca3af;
+    --color-gray-500: #6b7280;
+    --color-gray-700: #374151;
+    --color-gray-800: #1f2937;
+
+    --color-stone-50: #fafaf9;
+    --color-stone-100: #f5f5f4;
+    --color-stone-200: #e7e5e4;
+    --color-stone-300: #d6d3d1;
+    --color-stone-400: #a8a29e;
+    --color-stone-500: #78716c;
+    --color-stone-600: #57534e;
+    --color-stone-700: #44403c;
+    --color-stone-800: #292524;
+    --color-stone-900: #1c1917;
+    --color-stone-950: #0c0a09;
+
+    --color-red-50: #fef2f2;
+    --color-red-100: #fee2e2;
+    --color-red-200: #fecaca;
+    --color-red-400: #f87171;
+    --color-red-500: #ef4444;
+    --color-red-700: #b91c1c;
+
+    --color-rose-50: #fff1f2;
+    --color-rose-100: #ffe4e6;
+    --color-rose-200: #fecdd3;
+    --color-rose-300: #fda4af;
+    --color-rose-400: #fb7185;
+    --color-rose-500: #f43f5e;
+    --color-rose-600: #e11d48;
+    --color-rose-700: #be123c;
+    --color-rose-800: #9f1239;
+    --color-rose-900: #881337;
+    --color-rose-950: #4c0519;
+
+    --color-orange-50: #fff7ed;
+    --color-orange-100: #ffedd5;
+    --color-orange-200: #fed7aa;
+    --color-orange-300: #fdba74;
+    --color-orange-400: #fb923c;
+    --color-orange-500: #f97316;
+    --color-orange-800: #9a3412;
+
+    --color-amber-50: #fffbeb;
+    --color-amber-100: #fef3c7;
+    --color-amber-200: #fde68a;
+    --color-amber-300: #fcd34d;
+    --color-amber-400: #fbbf24;
+    --color-amber-500: #f59e0b;
+    --color-amber-600: #d97706;
+    --color-amber-700: #b45309;
+    --color-amber-800: #92400e;
+    --color-amber-900: #78350f;
+    --color-amber-950: #451a03;
+
+    --color-yellow-100: #fef9c3;
+    --color-yellow-200: #fef08a;
+    --color-yellow-300: #fde047;
+    --color-yellow-400: #facc15;
+
+    --color-emerald-50: #ecfdf5;
+    --color-emerald-100: #d1fae5;
+    --color-emerald-200: #a7f3d0;
+    --color-emerald-300: #6ee7b7;
+    --color-emerald-400: #34d399;
+    --color-emerald-500: #10b981;
+    --color-emerald-600: #059669;
+    --color-emerald-700: #047857;
+    --color-emerald-800: #065f46;
+    --color-emerald-900: #064e3b;
+    --color-emerald-950: #022c22;
+
+    --color-teal-50: #f0fdfa;
+    --color-teal-100: #ccfbf1;
+    --color-teal-200: #99f6e4;
+    --color-teal-300: #5eead4;
+    --color-teal-400: #2dd4bf;
+    --color-teal-500: #14b8a6;
+    --color-teal-600: #0d9488;
+    --color-teal-700: #0f766e;
+    --color-teal-800: #115e59;
+    --color-teal-900: #134e4a;
+    --color-teal-950: #042f2e;
+
+    --color-sky-50: #f0f9ff;
+    --color-sky-100: #e0f2fe;
+    --color-sky-200: #bae6fd;
+    --color-sky-300: #7dd3fc;
+    --color-sky-400: #38bdf8;
+
+    --color-blue-50: #eff6ff;
+    --color-blue-100: #dbeafe;
+    --color-blue-200: #bfdbfe;
+    --color-blue-300: #93c5fd;
+    --color-blue-400: #60a5fa;
+    --color-blue-500: #3b82f6;
+    --color-blue-800: #1e40af;
+    --color-blue-900: #1e3a8a;
+    --color-blue-950: #172554;
+
+    --color-indigo-100: #e0e7ff;
+    --color-indigo-900: #312e81;
+  }
+
+/*
+  Modo feria/tablets: botones sólidos y legibles.
+  Evita degradados, transparencias y colores modernos que algunas tablets
+  antiguas renderizan como blanco o transparente.
+*/
+button:not(:disabled) {
+  background-color: #2A597A !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: #2A597A !important;
+  text-shadow: none !important;
+}
+
+button:not(:disabled):hover,
+button:not(:disabled):focus,
+button:not(:disabled):active {
+  background-color: #1E435D !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: #1E435D !important;
+}
+
+button:disabled {
+  background-color: #cbd5e1 !important;
+  background-image: none !important;
+  color: #475569 !important;
+  border-color: #cbd5e1 !important;
+  opacity: 1 !important;
+}
+
+/*
+  Las tarjetas táctiles de los retos interactivos también son <button>.
+  Se dejan suaves para que no compitan visualmente con los botones de acción.
+*/
+.interactive-soft-buttons button:not([id]):not(:disabled) {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  text-shadow: none !important;
+}
+
+.interactive-soft-buttons button:not([id]):not(:disabled):hover,
+.interactive-soft-buttons button:not([id]):not(:disabled):focus,
+.interactive-soft-buttons button:not([id]):not(:disabled):active {
+  background-color: #f8fafc !important;
+  background-image: none !important;
+  color: #0f172a !important;
+  border-color: #2A597A !important;
+}
+
+.interactive-soft-buttons button:not([id])[class*="ring-"]:not(:disabled) {
+  background-color: #ecfdf5 !important;
+  color: #0f172a !important;
+  border-color: #0d9488 !important;
+}
+
+/*
+  Opciones de respuesta: mantienen buen contraste en tablets antiguas, pero
+  sin el bloque azul pesado reservado para acciones principales.
+*/
+button.answer-soft-button:not(:disabled),
+button[id*="-opt-"]:not(:disabled),
+button[id^="btn-concept-"]:not(:disabled),
+button[id^="btn-def-"]:not(:disabled),
+button[id^="btn-epp-verdadero"]:not(:disabled),
+button[id^="btn-epp-falso"]:not(:disabled) {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  text-shadow: none !important;
+}
+
+button.answer-soft-button:not(:disabled):hover,
+button.answer-soft-button:not(:disabled):focus,
+button.answer-soft-button:not(:disabled):active,
+button[id*="-opt-"]:not(:disabled):hover,
+button[id*="-opt-"]:not(:disabled):focus,
+button[id*="-opt-"]:not(:disabled):active,
+button[id^="btn-concept-"]:not(:disabled):hover,
+button[id^="btn-concept-"]:not(:disabled):focus,
+button[id^="btn-concept-"]:not(:disabled):active,
+button[id^="btn-def-"]:not(:disabled):hover,
+button[id^="btn-def-"]:not(:disabled):focus,
+button[id^="btn-def-"]:not(:disabled):active,
+button[id^="btn-epp-verdadero"]:not(:disabled):hover,
+button[id^="btn-epp-verdadero"]:not(:disabled):focus,
+button[id^="btn-epp-verdadero"]:not(:disabled):active,
+button[id^="btn-epp-falso"]:not(:disabled):hover,
+button[id^="btn-epp-falso"]:not(:disabled):focus,
+button[id^="btn-epp-falso"]:not(:disabled):active {
+  background-color: #f8fafc !important;
+  background-image: none !important;
+  color: #0f172a !important;
+  border-color: #2A597A !important;
+}
+
+button.answer-soft-button[class*="emerald"]:not(:disabled),
+button[id*="-opt-"][class*="emerald"]:not(:disabled),
+button[id^="btn-concept-"][class*="emerald"]:not(:disabled),
+button[id^="btn-def-"][class*="emerald"]:not(:disabled),
+button[id^="btn-epp-verdadero"][class*="emerald"]:not(:disabled),
+button[id^="btn-epp-falso"][class*="emerald"]:not(:disabled) {
+  background-color: #ecfdf5 !important;
+  color: #064e3b !important;
+  border-color: #10b981 !important;
+}
+
+button.answer-soft-button[class*="E07A5F"]:not(:disabled),
+button[id*="-opt-"][class*="E07A5F"]:not(:disabled),
+button[id^="btn-concept-"][class*="e07560"]:not(:disabled),
+button[id^="btn-def-"][class*="e07560"]:not(:disabled) {
+  background-color: #fff7ed !important;
+  color: #0f172a !important;
+  border-color: #e07a5f !important;
+}
+
+button.answer-soft-button[class*="rose"]:not(:disabled),
+button[id*="-opt-"][class*="rose"]:not(:disabled),
+button[id^="btn-concept-"][class*="rose"]:not(:disabled),
+button[id^="btn-def-"][class*="rose"]:not(:disabled),
+button[id^="btn-epp-verdadero"][class*="rose"]:not(:disabled),
+button[id^="btn-epp-falso"][class*="rose"]:not(:disabled) {
+  background-color: #fff1f2 !important;
+  color: #881337 !important;
+  border-color: #fb7185 !important;
+}
+

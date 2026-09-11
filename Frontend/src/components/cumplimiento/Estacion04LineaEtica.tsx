@@ -109,7 +109,7 @@ export default function Estacion04LineaEtica({ onNext, onPrev }: Estacion04Linea
               {/* Option: Ignorar */}
               <button
                 onClick={() => handleAction('ignorar')}
-                className={`p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${
+                className={`answer-soft-button p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${
                   selectedAction === 'ignorar'
                     ? 'bg-rose-50 border-rose-400 text-rose-950 shadow-sm'
                     : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
@@ -132,7 +132,7 @@ export default function Estacion04LineaEtica({ onNext, onPrev }: Estacion04Linea
               {/* Option: Reportar (Correct) */}
               <button
                 onClick={() => handleAction('reportar')}
-                className={`p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${
+                className={`answer-soft-button p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${
                   selectedAction === 'reportar'
                     ? 'bg-emerald-50 border-emerald-500 text-emerald-950 shadow-md ring-2 ring-emerald-500/20'
                     : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'

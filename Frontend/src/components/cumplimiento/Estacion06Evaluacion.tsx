@@ -145,7 +145,7 @@ export default function Estacion06Evaluacion({ onPassed, onPrev }: Estacion06Eva
                   key={opt.id}
                   onClick={() => !submitted && handleSelectOption(opt.id)}
                   disabled={submitted && isCorrect}
-                  className={`w-full text-left p-4 rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3.5 ${btnStyle}`}
+                  className={`answer-soft-button w-full text-left p-4 rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3.5 ${btnStyle}`}
                 >
                   <div className="mt-0.5 shrink-0">
                     {submitted ? (

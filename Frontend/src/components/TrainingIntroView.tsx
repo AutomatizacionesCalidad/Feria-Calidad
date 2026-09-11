@@ -19,6 +19,9 @@ import {
 import {
   useFairSession,
 } from "@/context/FairSessionContext";
+import {
+  useSwipeNavigation,
+} from "@/hooks/useSwipeNavigation";
 
 interface TrainingIntroViewProps {
   topic: Topic;
@@ -204,6 +207,39 @@ export default function TrainingIntroView({
 
   const slides =
     getSlidesContent();
+
+  const goToNextSlide =
+    () => {
+      setActiveSlide(
+        (current) =>
+          Math.min(
+            current + 1,
+            Math.max(
+              slides.length - 1,
+              0
+            )
+          )
+      );
+    };
+
+  const goToPreviousSlide =
+    () => {
+      setActiveSlide(
+        (current) =>
+          Math.max(
+            current - 1,
+            0
+          )
+      );
+    };
+
+  const slideSwipeHandlers =
+    useSwipeNavigation({
+      onSwipeLeft:
+        goToNextSlide,
+      onSwipeRight:
+        goToPreviousSlide,
+    });
 
   // VOLVER
   const handleBackToArea =
@@ -469,7 +505,10 @@ export default function TrainingIntroView({
             ) : (
 
               /* SLIDES MATERIAL / REGISTROS */
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-6">
+              <div
+                className="bg-slate-50 border border-slate-200 rounded-xl p-6 touch-pan-y select-none"
+                {...slideSwipeHandlers}
+              >
 
                 <div className="flex items-center justify-between border-b border-gray-200 pb-3">
 
@@ -588,6 +627,10 @@ export default function TrainingIntroView({
                   )}
 
                 </div>
+
+                <p className="mt-3 text-[10px] text-center text-slate-400 font-semibold sm:hidden">
+                  Desliza para cambiar de ficha
+                </p>
 
               </div>
 

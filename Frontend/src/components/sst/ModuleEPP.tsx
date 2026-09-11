@@ -16,6 +16,9 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useFairSession } from "@/context/FairSessionContext";
+import {
+  useSwipeNavigation,
+} from "@/hooks/useSwipeNavigation";
 
 interface ModuleEPPProps {
   onComplete: () => void;
@@ -67,6 +70,30 @@ export default function ModuleEPP({
     setIsAnswerCorrect(false);
   };
 
+  const goToNextScreen = () => {
+    setCurrentScreen((screen) =>
+      screen < 3
+        ? ((screen + 1) as 1 | 2 | 3)
+        : screen
+    );
+  };
+
+  const goToPreviousScreen = () => {
+    setCurrentScreen((screen) =>
+      screen > 1
+        ? ((screen - 1) as 1 | 2 | 3)
+        : screen
+    );
+  };
+
+  const swipeHandlers =
+    useSwipeNavigation({
+      onSwipeLeft:
+        goToNextScreen,
+      onSwipeRight:
+        goToPreviousScreen,
+    });
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8 fade-in">
       
@@ -104,7 +131,10 @@ export default function ModuleEPP({
       </div>
 
       {/* Main Container */}
-      <div className="bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden">
+      <div
+        className="bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden touch-pan-y"
+        {...swipeHandlers}
+      >
         
         {/* Header Bar */}
         <div className="bg-gradient-to-r from-[#2A597A] to-[#40647E] text-white p-6 sm:p-8 flex items-center justify-between">

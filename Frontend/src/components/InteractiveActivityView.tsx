@@ -184,7 +184,7 @@ export default function InteractiveActivityView({
     };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6">
+    <div className="interactive-soft-buttons max-w-4xl mx-auto px-4 py-8 sm:px-6">
 
       {/* NAVEGACIÓN */}
       <div className="flex items-center justify-between mb-6">

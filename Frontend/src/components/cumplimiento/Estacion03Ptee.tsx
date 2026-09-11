@@ -165,7 +165,7 @@ export default function Estacion03Ptee({ onNext, onPrev }: Estacion03PteeProps) 
               {/* Option A */}
               <button
                 onClick={() => handleDecision('A')}
-                className={`w-full text-left p-4 rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
+                className={`answer-soft-button w-full text-left p-4 rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
                   selectedDecision === 'A' 
                     ? 'bg-rose-50 border-rose-400 text-rose-950 shadow-sm' 
                     : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800'
@@ -189,7 +189,7 @@ export default function Estacion03Ptee({ onNext, onPrev }: Estacion03PteeProps) 
               {/* Option B (Correct) */}
               <button
                 onClick={() => handleDecision('B')}
-                className={`w-full text-left p-4 rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
+                className={`answer-soft-button w-full text-left p-4 rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3 ${
                   selectedDecision === 'B' 
                     ? 'bg-emerald-50 border-emerald-500 text-emerald-950 shadow-sm' 
                     : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800'

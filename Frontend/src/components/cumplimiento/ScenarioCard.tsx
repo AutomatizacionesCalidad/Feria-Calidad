@@ -146,7 +146,7 @@ export default function ScenarioCard({
           <button
             type="button"
             onClick={() => handleSelectOption('A')}
-            className={`w-full text-left p-4 rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3 relative ${
+            className={`answer-soft-button w-full text-left p-4 rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3 relative ${
               selectedOption === 'A'
                 ? optionAIsCorrect
                   ? 'bg-emerald-50/90 border-emerald-500 text-emerald-950 shadow-xs'
@@ -187,7 +187,7 @@ export default function ScenarioCard({
           <button
             type="button"
             onClick={() => handleSelectOption('B')}
-            className={`w-full text-left p-4 rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3 relative ${
+            className={`answer-soft-button w-full text-left p-4 rounded-xl border-2 transition-all cursor-pointer flex items-start gap-3 relative ${
               selectedOption === 'B'
                 ? !optionAIsCorrect
                   ? 'bg-emerald-50/90 border-emerald-500 text-emerald-950 shadow-xs'

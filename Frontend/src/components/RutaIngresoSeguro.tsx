@@ -485,7 +485,7 @@ export default function RutaIngresoSeguro({
     grisSelectedPallet !== null;
 
   return (
-    <div className="space-y-6 animate-fade-in font-sans">
+    <div className="interactive-soft-buttons space-y-6 animate-fade-in font-sans">
 
       {/* TRACKER */}
       <div className="bg-slate-900 text-white rounded-2xl p-4 sm:p-5 shadow-lg border border-slate-800">

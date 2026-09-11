@@ -14,6 +14,9 @@ import {
   Flame
 } from 'lucide-react';
 import { useFairSession } from "@/context/FairSessionContext";
+import {
+  useSwipeNavigation,
+} from "@/hooks/useSwipeNavigation";
 
 interface ModuleAccidentalidadProps {
   onComplete: () => void;
@@ -112,6 +115,30 @@ export default function ModuleAccidentalidad({
 
   const isMatchingComplete = matches.A !== null && matches.B !== null && matches.C !== null;
 
+  const goToNextScreen = () => {
+    setCurrentScreen((screen) =>
+      screen < 3
+        ? ((screen + 1) as 1 | 2 | 3)
+        : screen
+    );
+  };
+
+  const goToPreviousScreen = () => {
+    setCurrentScreen((screen) =>
+      screen > 1
+        ? ((screen - 1) as 1 | 2 | 3)
+        : screen
+    );
+  };
+
+  const swipeHandlers =
+    useSwipeNavigation({
+      onSwipeLeft:
+        goToNextScreen,
+      onSwipeRight:
+        goToPreviousScreen,
+    });
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8 fade-in">
       
@@ -149,7 +176,10 @@ export default function ModuleAccidentalidad({
       </div>
 
       {/* Main Container */}
-      <div className="bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden">
+      <div
+        className="bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden touch-pan-y"
+        {...swipeHandlers}
+      >
         
         {/* Header Bar */}
         <div className="bg-gradient-to-r from-[#e07560] to-[#F2917E] text-white p-6 sm:p-8 flex items-center justify-between">

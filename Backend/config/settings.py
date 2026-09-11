@@ -29,6 +29,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
+    "172.15.2.38",
+    "10.10.40.80",
 ]
 
 
@@ -191,10 +193,22 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:9000",
+    "http://127.0.0.1:9000",
+    "http://localhost:9001",
+    "http://127.0.0.1:9001",
+    "http://172.15.2.38:9001",
+    "http://10.10.40.80:9001",
 ]
 
 # CSRF
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:9000",
+    "http://127.0.0.1:9000",
+    "http://localhost:9001",
+    "http://127.0.0.1:9001",
+    "http://172.15.2.38:9001",
+    "http://10.10.40.80:9001",
 ]
